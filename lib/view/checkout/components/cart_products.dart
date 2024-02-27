@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:no_name_ecommerce/model/profile_model.dart';
 import 'package:no_name_ecommerce/services/cart_services/cart_service.dart';
+import 'package:no_name_ecommerce/services/cart_services/delivery_address_service.dart';
 import 'package:no_name_ecommerce/services/common_service.dart';
 import 'package:no_name_ecommerce/view/utils/common_helper.dart';
 import 'package:no_name_ecommerce/view/utils/constant_colors.dart';
@@ -103,12 +105,12 @@ class CartProducts extends StatelessWidget {
                         ),
                       ],
                     )),
-
                     //increase decrease button
                     Container(
-                      margin: const EdgeInsets.only(left: 10),
+                      // margin: const EdgeInsets.only(left: 10),
                       child: Row(
                         children: [
+                          gapW(10),
                           Container(
                             width: 110,
                             height: 39,
@@ -124,11 +126,28 @@ class CartProducts extends StatelessWidget {
                                 //decrease quanity
                                 InkWell(
                                   onTap: () {
-                                    cProvider.decreaseQtyAndPrice(
-                                        cProvider.cartItemList[i]['productId'],
-                                        cProvider.cartItemList[i]['title'],
-                                        cProvider.cartItemList[i]['attributes'],
-                                        context);
+                                    cProvider
+                                        .decreaseQtyAndPrice(
+                                            cProvider.cartItemList[i]
+                                                ['productId'],
+                                            cProvider.cartItemList[i]['title'],
+                                            cProvider.cartItemList[i]
+                                                ['attributes'],
+                                            context)
+                                        .then((_) {
+                                      final da =
+                                          Provider.of<DeliveryAddressService>(
+                                              context,
+                                              listen: false);
+                                      da.setVatAndincreaseTotal(
+                                        da.shippingCostDetails?.tax
+                                                ?.toDouble() ??
+                                            0,
+                                        context,
+                                      );
+                                    });
+
+                                    cProvider.resetCoupon(context);
                                   },
                                   child: Container(
                                     height: 32,
@@ -154,11 +173,27 @@ class CartProducts extends StatelessWidget {
                                 //increase quantity
                                 InkWell(
                                   onTap: () {
-                                    cProvider.increaseQtandPrice(
-                                        cProvider.cartItemList[i]['productId'],
-                                        cProvider.cartItemList[i]['title'],
-                                        cProvider.cartItemList[i]['attributes'],
-                                        context);
+                                    cProvider
+                                        .increaseQtandPrice(
+                                            cProvider.cartItemList[i]
+                                                ['productId'],
+                                            cProvider.cartItemList[i]['title'],
+                                            cProvider.cartItemList[i]
+                                                ['attributes'],
+                                            context)
+                                        .then((_) {
+                                      final da =
+                                          Provider.of<DeliveryAddressService>(
+                                              context,
+                                              listen: false);
+                                      da.setVatAndincreaseTotal(
+                                        da.shippingCostDetails?.tax
+                                                ?.toDouble() ??
+                                            0,
+                                        context,
+                                      );
+                                    });
+                                    cProvider.resetCoupon(context);
                                   },
                                   child: Container(
                                     height: 32,
@@ -178,17 +213,18 @@ class CartProducts extends StatelessWidget {
                               ],
                             ),
                           ),
-
+                          gapW(7),
                           //Delete button
                           InkWell(
                             onTap: () {
                               cProvider.remove(
                                   cProvider.cartItemList[i]['productId'],
                                   cProvider.cartItemList[i]['title'],
+                                  cProvider.cartItemList[i]['attributes'],
                                   context);
                             },
                             child: Container(
-                                margin: const EdgeInsets.only(left: 7),
+                                // margin: const EdgeInsets.only(left: 7),
                                 alignment: Alignment.center,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,

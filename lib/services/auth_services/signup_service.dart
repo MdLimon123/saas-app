@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:no_name_ecommerce/services/bottom_nav_service.dart';
+import 'package:no_name_ecommerce/services/dropdown_services/city_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/dropdown_services/country_dropdown_service.dart';
 import 'package:no_name_ecommerce/services/dropdown_services/state_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/translate_string_service.dart';
@@ -32,20 +33,18 @@ class SignupService with ChangeNotifier {
       required fullName,
       required email,
       required mobile,
-      required cityName,
+      required zipCode,
       bool isFromDeliveryAddressPage = false}) async {
     var connection = await checkConnection(context);
 
     var ln = Provider.of<TranslateStringService>(context, listen: false);
 
-    var countryName =
-        Provider.of<CountryDropdownService>(context, listen: false)
-            .selectedCountry;
-    var stateName =
-        Provider.of<StateDropdownService>(context, listen: false).selectedState;
-    if (stateName == 'Select State') {
-      stateName = null;
-    }
+    var countryId = Provider.of<CountryDropdownService>(context, listen: false)
+        .selectedCountryId;
+    var stateId = Provider.of<StateDropdownService>(context, listen: false)
+        .selectedStateId;
+    var cityId =
+        Provider.of<CityDropdownService>(context, listen: false).selectedCityId;
 
     if (!connection) return false;
 
@@ -57,10 +56,11 @@ class SignupService with ChangeNotifier {
       'full_name': fullName,
       'email': email,
       'mobile': mobile,
-      'country_name': countryName,
-      'city_name': cityName,
-      'state_name': stateName,
-      'terms_conditions': 'on'
+      'country_id': countryId.toString(),
+      'state_id': stateId.toString(),
+      'city_id': cityId.toString(),
+      'terms_conditions': 'on',
+      'postal_code': zipCode,
     });
     var header = {
       //if header type is application/json then the data should be in jsonEncode method
@@ -138,6 +138,12 @@ class SignupService with ChangeNotifier {
       showToast(error['message'][0], Colors.black);
     } else if (error.containsKey('mobile')) {
       showToast(error['mobile'][0], Colors.black);
+    } else if (error.containsKey('country_id')) {
+      showToast(error['country_id'][0], Colors.black);
+    } else if (error.containsKey('state_id')) {
+      showToast(error['state_id'][0], Colors.black);
+    } else if (error.containsKey('city_id')) {
+      showToast(error['city_id'][0], Colors.black);
     } else {
       showToast(ln.getString(ConstString.somethingWentWrong), Colors.black);
     }

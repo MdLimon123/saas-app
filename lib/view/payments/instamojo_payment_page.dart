@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:http/http.dart' as http;
 import 'package:no_name_ecommerce/services/payment_services/payment_gateway_list_service.dart';
@@ -41,6 +42,7 @@ class _InstamojoPaymentPageState extends State<InstamojoPaymentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         leading: InkWell(
             onTap: () {
               isLoading = true;
@@ -125,7 +127,7 @@ class _InstamojoPaymentPageState extends State<InstamojoPaymentPage> {
     print(realResponse);
     if (realResponse['success'] == true) {
       if (realResponse["payment"]['status'] == 'Credit') {
-        print('instamojo payment successfull');
+        print('instamojo payment successfully');
 
         Provider.of<PlaceOrderService>(context, listen: false)
             .makePaymentSuccess(context);
@@ -171,8 +173,7 @@ class _InstamojoPaymentPageState extends State<InstamojoPaymentPage> {
         isLoading = false; //setting state to false after data loaded
 
         selectedUrl =
-            json.decode(resp.body)["payment_request"]['longurl'].toString() +
-                "?embed=form";
+            "${json.decode(resp.body)["payment_request"]['longurl']}?embed=form";
       });
       print(json.decode(resp.body)['message'].toString());
 //If something is wrong with the data we provided to

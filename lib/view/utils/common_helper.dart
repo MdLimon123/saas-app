@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:no_name_ecommerce/services/rtl_service.dart';
 import 'package:no_name_ecommerce/services/translate_string_service.dart';
@@ -14,6 +15,7 @@ appbarCommon(String title, BuildContext context, VoidCallback pressed,
     {bool hasBackButton = true, bool centerTitle = true, actions}) {
   return AppBar(
     centerTitle: centerTitle ? true : false,
+    systemOverlayStyle: SystemUiOverlayStyle.dark,
     iconTheme: const IconThemeData(color: greyPrimary),
     title: Consumer<TranslateStringService>(
       builder: (context, ln, child) => Text(

@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:no_name_ecommerce/services/payment_services/paypal_service.dart';
 
 import 'package:webview_flutter/webview_flutter.dart';
@@ -168,6 +169,7 @@ class PaypalPaymentState extends State<PaypalPayment> {
     if (checkoutUrl != null) {
       return Scaffold(
         appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
           backgroundColor: Theme.of(context).colorScheme.background,
           leading: GestureDetector(
             child: const Icon(Icons.arrow_back_ios),
@@ -205,6 +207,7 @@ class PaypalPaymentState extends State<PaypalPayment> {
       return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
           leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {

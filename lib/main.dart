@@ -49,17 +49,17 @@ import 'package:provider/provider.dart';
 import 'services/cart_services/cart_service.dart';
 import 'services/cart_services/coupon_service.dart';
 import 'services/cart_services/delivery_address_service.dart';
+import 'services/dropdown_services/city_dropdown_services.dart';
 import 'services/dropdown_services/state_dropdown_services.dart';
 import 'services/ticket_services/create_ticket_service.dart';
 import 'services/ticket_services/support_messages_service.dart';
 import 'services/ticket_services/support_ticket_service.dart';
 
 void main() {
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-    ),
-  );
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent, // transparent status bar
+    statusBarIconBrightness: Brightness.dark,
+  ));
 
   runApp(const MyApp());
 }
@@ -119,6 +119,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => FilterColorSizeService()),
         ChangeNotifierProvider(create: (_) => RecentProductService()),
         ChangeNotifierProvider(create: (_) => WriteReviewService()),
+        ChangeNotifierProvider(create: (_) => CityDropdownService()),
         ChangeNotifierProvider(
             create: (_) => AddRemoveShippingAddressService()),
         ChangeNotifierProvider(
@@ -143,7 +144,10 @@ class MyApp extends StatelessWidget {
           }),
           primarySwatch: Colors.blue,
           scaffoldBackgroundColor: Colors.white,
-          appBarTheme: const AppBarTheme(backgroundColor: Colors.blue),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.blue,
+            systemOverlayStyle: SystemUiOverlayStyle.dark,
+          ),
           buttonTheme: const ButtonThemeData(buttonColor: primaryColor),
           textSelectionTheme:
               const TextSelectionThemeData(cursorColor: primaryColor),

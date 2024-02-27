@@ -44,11 +44,11 @@ class CouponService with ChangeNotifier {
 
     var ln = Provider.of<TranslateStringService>(context, listen: false);
 
-    if (couponCode == appliedCoupon) {
-      showToast(
-          ln.getString(ConstString.youAlreadyAppliedThisCoupon), primaryColor);
-      return false;
-    }
+    // if (couponCode == appliedCoupon) {
+    //   showToast(
+    //       ln.getString(ConstString.youAlreadyAppliedThisCoupon), primaryColor);
+    //   return false;
+    // }
 
     //get products from cart
     List items = [];
@@ -59,7 +59,7 @@ class CouponService with ChangeNotifier {
       });
     }
 
-    var total = Provider.of<CartService>(context, listen: false).totalPrice;
+    var total = Provider.of<CartService>(context, listen: false).subTotal;
 
     setLoadingTrue();
     var data = jsonEncode({
@@ -80,8 +80,11 @@ class CouponService with ChangeNotifier {
 
     if (response.statusCode == 200 &&
         jsonDecode(response.body)['discounted_price'] != 0) {
+      debugPrint(data);
+      debugPrint(response.body);
       oldCouponDiscount = couponDiscount;
-      couponDiscount = jsonDecode(response.body)['discounted_price'];
+      final resDisc = jsonDecode(response.body)['discounted_price'];
+      couponDiscount = total - resDisc;
       appliedCoupon = couponCode;
       print('coupon amount is $couponDiscount');
 
@@ -89,7 +92,7 @@ class CouponService with ChangeNotifier {
           ln.getString(ConstString.couponAppliedSuccessfully), Colors.black);
 
       Provider.of<CartService>(context, listen: false)
-          .calculateTotalAfterCouponApplied(
+          .calculateTotalAfterCouponApplied(context,
               oldDiscount: oldCouponDiscount, newDiscount: couponDiscount);
 
       notifyListeners();

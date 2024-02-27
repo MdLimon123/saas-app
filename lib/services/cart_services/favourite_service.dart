@@ -33,6 +33,7 @@ class FavouriteService with ChangeNotifier {
       required subcategory,
       required childCategory,
       required attributes,
+      required taxOSR,
       required variantId}) async {
     var ln = Provider.of<TranslateStringService>(context, listen: false);
 
@@ -59,6 +60,7 @@ class FavouriteService with ChangeNotifier {
       cartObj.childCategory = childCategory;
       cartObj.attributes = attributes;
       cartObj.variantId = variantId;
+      cartObj.taxOSR = taxOSR?.toString() ?? "";
 
       await connection.insert('fav_table', cartObj.cartMap());
       print('added to favourite');

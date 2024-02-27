@@ -46,42 +46,48 @@ class _ColorAndSizeForFilterState extends State<ColorAndSizeForFilter> {
                           for (int i = 0;
                               i < p.colorSize['all_sizes'].length;
                               i++)
-                            InkWell(
-                              highlightColor: Colors.transparent,
-                              splashColor: Colors.transparent,
-                              onTap: () {
-                                p.setSizeIndex(i);
+                            Row(
+                              children: [
+                                InkWell(
+                                  highlightColor: Colors.transparent,
+                                  splashColor: Colors.transparent,
+                                  onTap: () {
+                                    p.setSizeIndex(i);
 
-                                p.setSelectedSizeCode(
-                                    p.colorSize['all_sizes'][i]['size_code']);
-                              },
-                              child: Container(
-                                margin: EdgeInsets.only(
-                                    right:
-                                        i != p.colorSize['all_sizes'].length - 1
-                                            ? 12
-                                            : 0),
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                    color: p.selectedSizeIndex == i
-                                        ? primaryColor
-                                        : Colors.white,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
+                                    p.setSelectedSizeCode(
+                                        p.colorSize['all_sizes'][i]
+                                            ['size_code']);
+                                  },
+                                  child: Container(
+                                    // margin: EdgeInsets.only(
+                                    //     right:
+                                    //         i != p.colorSize['all_sizes'].length - 1
+                                    //             ? 12
+                                    //             : 0),
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
                                         color: p.selectedSizeIndex == i
-                                            ? Colors.transparent
-                                            : greyFive)),
-                                child: Text(
-                                  "${p.colorSize['all_sizes'][i]['size_code']}",
-                                  style: TextStyle(
-                                      color: p.selectedSizeIndex == i
-                                          ? Colors.white
-                                          : greyParagraph,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600),
+                                            ? primaryColor
+                                            : Colors.white,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                            color: p.selectedSizeIndex == i
+                                                ? Colors.transparent
+                                                : greyFive)),
+                                    child: Text(
+                                      "${p.colorSize['all_sizes'][i]['size_code']}",
+                                      style: TextStyle(
+                                          color: p.selectedSizeIndex == i
+                                              ? Colors.white
+                                              : greyParagraph,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                gapW(12),
+                              ],
                             )
                         ],
                       ),
@@ -107,34 +113,40 @@ class _ColorAndSizeForFilterState extends State<ColorAndSizeForFilter> {
                   child: Row(
                     children: [
                       for (int i = 0; i < p.colorSize['all_colors'].length; i++)
-                        InkWell(
-                          highlightColor: Colors.transparent,
-                          splashColor: Colors.transparent,
-                          onTap: () {
-                            p.setColorIndex(i);
-                            p.setSelectedColorName(
-                                p.colorSize['all_colors'][i]['name']);
-                          },
-                          child: Container(
-                            margin: EdgeInsets.only(
-                                right: i != p.colorSize['all_colors'].length - 1
-                                    ? 10
-                                    : 0),
-                            height: 35,
-                            width: 35,
-                            decoration: BoxDecoration(
-                                color: Color(int.parse(p.colorSize['all_colors']
-                                        [i]['color_code']
-                                    .replaceAll('#', '0xff'))),
-                                shape: BoxShape.circle),
-                            child: p.selectedColorIndex == i
-                                ? const Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                    size: 20,
-                                  )
-                                : Container(),
-                          ),
+                        Row(
+                          children: [
+                            InkWell(
+                              highlightColor: Colors.transparent,
+                              splashColor: Colors.transparent,
+                              onTap: () {
+                                p.setColorIndex(i);
+                                p.setSelectedColorName(
+                                    p.colorSize['all_colors'][i]['name']);
+                              },
+                              child: Container(
+                                // margin: EdgeInsets.only(
+                                //     right: i != p.colorSize['all_colors'].length - 1
+                                //         ? 10
+                                //         : 0),
+                                height: 35,
+                                width: 35,
+                                decoration: BoxDecoration(
+                                    color: Color(int.parse(p
+                                        .colorSize['all_colors'][i]
+                                            ['color_code']
+                                        .replaceAll('#', '0xff'))),
+                                    shape: BoxShape.circle),
+                                child: p.selectedColorIndex == i
+                                    ? const Icon(
+                                        Icons.check,
+                                        color: Colors.white,
+                                        size: 20,
+                                      )
+                                    : Container(),
+                              ),
+                            ),
+                            gapW(10),
+                          ],
                         )
                     ],
                   ),

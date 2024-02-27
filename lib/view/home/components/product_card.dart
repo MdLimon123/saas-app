@@ -7,7 +7,9 @@ import 'package:no_name_ecommerce/services/common_service.dart';
 import 'package:no_name_ecommerce/services/rtl_service.dart';
 import 'package:no_name_ecommerce/view/utils/common_helper.dart';
 import 'package:no_name_ecommerce/view/utils/config.dart';
+import 'package:no_name_ecommerce/view/utils/const_strings.dart';
 import 'package:no_name_ecommerce/view/utils/constant_styles.dart';
+import 'package:no_name_ecommerce/view/utils/responsive.dart';
 import 'package:provider/provider.dart';
 
 import '../../utils/constant_colors.dart';
@@ -30,6 +32,7 @@ class ProductCard extends StatelessWidget {
     required this.category,
     required this.subcategory,
     required this.childCategory,
+    required this.taxOSR,
   }) : super(key: key);
 
   final productId;
@@ -47,6 +50,7 @@ class ProductCard extends StatelessWidget {
   final category;
   final subcategory;
   final childCategory;
+  final taxOSR;
 
   @override
   Widget build(BuildContext context) {
@@ -186,12 +190,17 @@ class ProductCard extends StatelessWidget {
                                     ? childCategory[0]
                                     : '0',
                                 attributes: {},
+                                taxOSR: taxOSR,
                                 variantId: null,
                                 ignoreAttribute: true);
-                          }, 'Add to cart')
+                          },
+                            tsProvider?.getString(ConstString.addToCart) ??
+                                ConstString.addToCart)
                         : addToCartViewDetailsBtn(context, () {
                             gotoProductDetails(context, productId);
-                          }, 'View Details'),
+                          },
+                            tsProvider?.getString(ConstString.viewDetails) ??
+                                ConstString.addToCart),
                   ],
                 ),
               ],

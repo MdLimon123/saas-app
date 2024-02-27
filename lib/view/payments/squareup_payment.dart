@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:no_name_ecommerce/services/payment_services/payment_gateway_list_service.dart';
 import 'package:no_name_ecommerce/view/utils/others_helper.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +31,7 @@ class SquareUpPayment extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: const Text("Square"),
       ),
       body: FutureBuilder(

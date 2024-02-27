@@ -102,6 +102,7 @@ class RecentProductsList {
     this.categoryId,
     this.subCategoryId,
     required this.childCategoryIds,
+    this.taxOSR,
   });
 
   dynamic prdId;
@@ -115,6 +116,7 @@ class RecentProductsList {
   dynamic stockCount;
   dynamic avgRatting;
   bool? isCartAble;
+  dynamic taxOSR;
   dynamic vendorId;
   dynamic vendorName;
   dynamic categoryId;
@@ -126,6 +128,7 @@ class RecentProductsList {
         prdId: json["prd_id"],
         title: json["title"],
         imgUrl: json["img_url"],
+        taxOSR: json["tax_options_sum_rate"],
         campaignPercentage: json["campaign_percentage"].toDouble(),
         price: json["price"],
         discountPrice: json["discount_price"],

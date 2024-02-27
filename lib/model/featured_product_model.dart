@@ -53,6 +53,7 @@ class FeaturedProducts {
     this.vendorName,
     this.categoryId,
     this.subCategoryId,
+    this.taxOSR,
     required this.childCategoryIds,
   });
 
@@ -66,6 +67,7 @@ class FeaturedProducts {
   dynamic campaignProduct;
   dynamic stockCount;
   dynamic avgRatting;
+  dynamic taxOSR;
   dynamic isCartAble;
   dynamic vendorId;
   dynamic vendorName;
@@ -78,6 +80,7 @@ class FeaturedProducts {
         prdId: json["prd_id"],
         title: json["title"],
         imgUrl: json["img_url"],
+        taxOSR: json["tax_options_sum_rate"],
         campaignPercentage: json["campaign_percentage"] != null
             ? json["campaign_percentage"].toDouble()
             : null,

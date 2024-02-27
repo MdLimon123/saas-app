@@ -16,25 +16,38 @@ class CampaignTimer extends StatefulWidget {
   State<CampaignTimer> createState() => _CampaignTimerState();
 }
 
-class _CampaignTimerState extends State<CampaignTimer> {
-  final CustomTimerController timerController = CustomTimerController();
+class _CampaignTimerState extends State<CampaignTimer>
+    with TickerProviderStateMixin {
+  CustomTimerController? timerController;
 
   @override
   void initState() {
     super.initState();
-    timerController.start();
+    final todayDate = DateTime.now();
+    debugPrint(widget.remainingTime.toString());
+    var timeLeft = widget.remainingTime.difference(todayDate).inDays;
+    if (timeLeft < 0) {
+      timeLeft = 0;
+    }
+    timerController = CustomTimerController(
+      vsync: this,
+      begin: Duration(days: timeLeft),
+      end: const Duration(),
+    );
+  }
+
+  @override
+  dispose() {
+    timerController?.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final todayDate = DateTime.now();
-    final timeLeft = widget.remainingTime.difference(todayDate).inDays;
-
+    timerController?.start();
     return CustomTimer(
-        controller: timerController,
-        begin: Duration(days: timeLeft),
-        end: const Duration(),
-        builder: (time) {
+        controller: timerController!,
+        builder: (time, remainingTime) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -49,7 +62,7 @@ class _CampaignTimerState extends State<CampaignTimer> {
                       color: primaryColor),
                   child: TimerCard(
                     i: i,
-                    time: time,
+                    time: remainingTime,
                   ),
                 )
             ],

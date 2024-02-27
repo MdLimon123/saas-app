@@ -7,6 +7,7 @@ import 'package:no_name_ecommerce/view/checkout/components/cart_icon.dart';
 import 'package:no_name_ecommerce/view/home/components/category_modal.dart';
 import 'package:no_name_ecommerce/view/utils/const_strings.dart';
 import 'package:no_name_ecommerce/view/utils/constant_colors.dart';
+import 'package:no_name_ecommerce/view/utils/constant_styles.dart';
 import 'package:provider/provider.dart';
 
 class HomeTop extends StatelessWidget {
@@ -58,6 +59,7 @@ class HomeTop extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
+                                      gapH(12)
                                     ],
                                   )),
                                 ],
@@ -84,7 +86,7 @@ class HomeTop extends StatelessWidget {
                         ),
                   Container(
                       margin: const EdgeInsets.only(right: 30),
-                      child: const CartIcon())
+                      child: const CartIcon()),
                 ],
               )),
     );

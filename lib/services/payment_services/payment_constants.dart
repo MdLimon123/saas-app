@@ -30,7 +30,7 @@ randomOrderId() {
   return rng.nextInt(100).toString();
 }
 
-payAction(String method, BuildContext context, imagePath) {
+payAction(String method, BuildContext context, String transactionId) {
   //to know method names visit PaymentGatewayListService class where payment
   //methods list are fetching with method name
   var ln = Provider.of<TranslateStringService>(context, listen: false);
@@ -132,11 +132,12 @@ payAction(String method, BuildContext context, imagePath) {
       break;
 
     case 'manual_payment':
-      if (imagePath == null) {
+      if (transactionId.trim().isEmpty) {
         showToast(ln.getString(ConstString.youMustUploadCheque), Colors.black);
       } else {
-        Provider.of<PlaceOrderService>(context, listen: false)
-            .placeOrder(context, imagePath.path, isManualOrCod: true);
+        Provider.of<PlaceOrderService>(context, listen: false).placeOrder(
+            context, transactionId,
+            isManualOrCod: true, transactionId: transactionId);
       }
       // StripeService().makePayment(context);
       break;

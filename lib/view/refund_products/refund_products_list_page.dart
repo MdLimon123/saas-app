@@ -29,7 +29,10 @@ class _RefundProductsListPageState extends State<RefundProductsListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appbarCommon(ConstString.refundProducts, context, () {
+      appBar: appbarCommon(
+          tsProvider?.getString(ConstString.refundProducts) ??
+              ConstString.refundProducts,
+          context, () {
         Navigator.pop(context);
       }),
       backgroundColor: bgColor,

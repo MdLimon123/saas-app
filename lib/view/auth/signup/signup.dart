@@ -41,7 +41,7 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
-  TextEditingController cityController = TextEditingController();
+  TextEditingController zipCodeController = TextEditingController();
 
   bool keepLoggedIn = true;
 
@@ -99,18 +99,17 @@ class _SignupPageState extends State<SignupPage> {
                             gapH(18),
 
                             //city ============>
-                            labelCommon(ConstString.city),
+                            labelCommon(ConstString.zipCode),
 
                             CustomInput(
-                              controller: cityController,
+                              controller: zipCodeController,
                               validation: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return ln
-                                      .getString(ConstString.plzEnterYourCity);
+                                if (value == null || value.length < 4) {
+                                  return ln.getString(ConstString.plzEnterZip);
                                 }
                                 return null;
                               },
-                              hintText: ln.getString(ConstString.enterYourCity),
+                              hintText: ln.getString(ConstString.enterZip),
                               paddingHorizontal: 20,
                               textInputAction: TextInputAction.next,
                             ),
@@ -192,10 +191,10 @@ class _SignupPageState extends State<SignupPage> {
                                     provider.signup(context,
                                         fullName: fullNameController.text,
                                         userName: userNameController.text,
-                                        cityName: cityController.text,
                                         email: emailController.text,
                                         mobile: phoneController.text,
-                                        password: passwordController.text);
+                                        password: passwordController.text,
+                                        zipCode: zipCodeController.text);
                                   }
                                 }
                               }

@@ -5,6 +5,7 @@ import 'package:no_name_ecommerce/services/auth_services/signup_service.dart';
 import 'package:no_name_ecommerce/services/cart_services/cart_service.dart';
 import 'package:no_name_ecommerce/services/cart_services/delivery_address_service.dart';
 import 'package:no_name_ecommerce/services/common_service.dart';
+import 'package:no_name_ecommerce/services/dropdown_services/city_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/dropdown_services/country_dropdown_service.dart';
 import 'package:no_name_ecommerce/services/dropdown_services/state_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/profile_service.dart';
@@ -34,7 +35,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
   TextEditingController fullNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
-  TextEditingController cityController = TextEditingController();
+  TextEditingController zipCodeController = TextEditingController();
   TextEditingController zipController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   final passController = TextEditingController();
@@ -66,7 +67,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
     emailController.text = savedAddress?.email ?? '';
     phoneController.text = savedAddress?.phone ?? '';
     addressController.text = savedAddress?.address ?? '';
-    cityController.text = savedAddress?.city ?? '';
+    zipCodeController.text = savedAddress?.postCode ?? '';
   }
 
   addressNewEntered() {
@@ -76,8 +77,9 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
     fullNameController.text = enteredDeliveryAddress['name'] ?? '';
     emailController.text = enteredDeliveryAddress['email'] ?? '';
     phoneController.text = enteredDeliveryAddress['phone'] ?? '';
-    cityController.text = enteredDeliveryAddress['city'] ?? '';
+    zipCodeController.text = enteredDeliveryAddress['city'] ?? '';
     addressController.text = enteredDeliveryAddress['address'] ?? '';
+    zipCodeController.text = enteredDeliveryAddress['zipCode'] ?? '';
   }
 
 //==================>
@@ -90,11 +92,13 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
     emailController.text = userDetails?.email ?? '';
     phoneController.text = userDetails?.mobile ?? '';
     addressController.text = userDetails?.address ?? '';
-    cityController.text = userDetails?.city ?? '';
+    zipCodeController.text = userDetails?.postalCode ?? '';
   }
 
   @override
   Widget build(BuildContext context) {
+    // Provider.of<DeliveryAddressService>(context, listen: false)
+    //     .setLoadingFalse();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appbarCommon('Delivery address', context, () {
@@ -187,18 +191,17 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                             gapH(10),
 
                             //City /town ============>
-                            labelCommon(ConstString.cityTown),
+                            labelCommon(ConstString.zipCode),
 
                             CustomInput(
-                              controller: cityController,
+                              controller: zipCodeController,
                               validation: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return ln
-                                      .getString(ConstString.plzEnterCityTown);
+                                if (value == null || value.length < 4) {
+                                  return ln.getString(ConstString.plzEnterZip);
                                 }
                                 return null;
                               },
-                              hintText: ln.getString(ConstString.enterCityTown),
+                              hintText: ln.getString(ConstString.enterZip),
                               // icon: 'assets/icons/email-grey.png',
                               paddingHorizontal: 17,
                               textInputAction: TextInputAction.next,
@@ -232,69 +235,75 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                         ? Column(
                                             children: [
                                               //default shipping
-                                              InkWell(
-                                                onTap: () {
-                                                  var minOrder = dProvider
-                                                          .shippingCostDetails
-                                                          ?.defaultShippingOptions
-                                                          ?.options
-                                                          ?.minimumOrderAmount ??
-                                                      0;
-                                                  var couponNeeded = dProvider
-                                                      .checkIfCouponNeed(
-                                                          dProvider
-                                                              .shippingCostDetails
-                                                              ?.defaultShippingOptions
-                                                              ?.options
-                                                              ?.coupon,
-                                                          context);
-                                                  if (cProvider.subTotal <
-                                                      minOrder) {
-                                                    showToast(
-                                                        ln.getString(ConstString
-                                                                .minimum) +
-                                                            ' \$${showWithCurrency(context, minOrder)} ' +
-                                                            ln.getString(ConstString
-                                                                .orderIsNeeded),
-                                                        Colors.black);
-                                                    return;
-                                                  } else if (couponNeeded) {
-                                                    showToast(
-                                                        ln.getString(ConstString
-                                                            .couponNeeded),
-                                                        Colors.black);
-                                                    return;
-                                                  }
+                                              if (dProvider.shippingCostDetails
+                                                      ?.defaultShippingOptions !=
+                                                  null)
+                                                InkWell(
+                                                  onTap: () {
+                                                    var minOrder = dProvider
+                                                            .shippingCostDetails
+                                                            ?.defaultShippingOptions
+                                                            ?.options
+                                                            ?.minimumOrderAmount ??
+                                                        0;
+                                                    var couponNeeded = dProvider
+                                                        .checkIfCouponNeed(
+                                                            dProvider
+                                                                .shippingCostDetails
+                                                                ?.defaultShippingOptions
+                                                                ?.options
+                                                                ?.coupon,
+                                                            context);
+                                                    if (cProvider.subTotal <
+                                                        minOrder) {
+                                                      showToast(
+                                                          ln.getString(
+                                                                  ConstString
+                                                                      .minimum) +
+                                                              ' \$${showWithCurrency(context, minOrder)} ' +
+                                                              ln.getString(
+                                                                  ConstString
+                                                                      .orderIsNeeded),
+                                                          Colors.black);
+                                                      return;
+                                                    } else if (couponNeeded) {
+                                                      showToast(
+                                                          ln.getString(
+                                                              ConstString
+                                                                  .couponNeeded),
+                                                          Colors.black);
+                                                      return;
+                                                    }
 
-                                                  dProvider.setShipIdAndCosts(
-                                                      dProvider
-                                                          .shippingCostDetails
-                                                          ?.defaultShippingOptions
-                                                          ?.options
-                                                          ?.shippingMethodId,
-                                                      dProvider
-                                                              .shippingCostDetails
-                                                              ?.defaultShippingOptions
-                                                              ?.options
-                                                              ?.cost ??
-                                                          0,
-                                                      dProvider
-                                                          .shippingCostDetails
-                                                          ?.defaultShippingOptions
-                                                          ?.name,
-                                                      context);
+                                                    dProvider.setShipIdAndCosts(
+                                                        dProvider
+                                                            .shippingCostDetails
+                                                            ?.defaultShippingOptions
+                                                            ?.options
+                                                            ?.shippingMethodId,
+                                                        dProvider
+                                                                .shippingCostDetails
+                                                                ?.defaultShippingOptions
+                                                                ?.options
+                                                                ?.cost ??
+                                                            0,
+                                                        dProvider
+                                                            .shippingCostDetails
+                                                            ?.defaultShippingOptions
+                                                            ?.name,
+                                                        context);
 
-                                                  setState(() {
-                                                    dProvider
-                                                        .setSelectedShipIndex(
-                                                            -1);
-                                                  });
-                                                },
-                                                child: FreeShipOption(
-                                                  selectedShipping: dProvider
-                                                      .selectedShippingIndex,
+                                                    setState(() {
+                                                      dProvider
+                                                          .setSelectedShipIndex(
+                                                              -1);
+                                                    });
+                                                  },
+                                                  child: FreeShipOption(
+                                                    selectedShipping: dProvider
+                                                        .selectedShippingIndex,
+                                                  ),
                                                 ),
-                                              ),
 
                                               //Other shipping option ======>
                                               for (int i = 0;
@@ -314,6 +323,9 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                                         ?.id)
                                                   InkWell(
                                                     onTap: () {
+                                                      debugPrint(
+                                                          "shipping index is $i"
+                                                              .toString());
                                                       var minOrder = dProvider
                                                               .shippingCostDetails
                                                               ?.shippingOptions[
@@ -434,7 +446,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> {
                                           'name': fullNameController.text,
                                           'email': emailController.text,
                                           'phone': phoneController.text,
-                                          'city': cityController.text,
+                                          'zipCode': zipCodeController.text,
                                           'pass': passController.text,
                                           'address': addressController.text
                                         };

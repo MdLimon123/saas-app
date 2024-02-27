@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:no_name_ecommerce/services/cart_services/delivery_address_service.dart';
+import 'package:no_name_ecommerce/services/dropdown_services/city_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/dropdown_services/state_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/rtl_service.dart';
 import 'package:no_name_ecommerce/services/translate_string_service.dart';
@@ -84,7 +85,8 @@ class StateDropdownPopup extends StatelessWidget {
                               children: [
                                 gapH(30),
                                 CustomInput(
-                                  hintText: ConstString.searchState,
+                                  hintText:
+                                      ln.getString(ConstString.searchState),
                                   paddingHorizontal: 17,
                                   icon: 'assets/icons/search.png',
                                   onChanged: (v) {
@@ -125,6 +127,10 @@ class StateDropdownPopup extends StatelessWidget {
                                                         .fetchCountryStateShippingCost(
                                                             context);
                                                   }
+                                                  Provider.of<CityDropdownService>(
+                                                          context,
+                                                          listen: false)
+                                                      .setCityDefault();
 
                                                   Navigator.pop(context);
                                                 },
@@ -145,8 +151,8 @@ class StateDropdownPopup extends StatelessWidget {
                                                 ),
                                               );
                                             })
-                                        : paragraphCommon(
-                                            ConstString.noCityFound)
+                                        : paragraphCommon(ln
+                                            .getString(ConstString.noCityFound))
                                     : Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,

@@ -9,6 +9,7 @@ import 'package:no_name_ecommerce/view/utils/api_url.dart';
 
 class CampaignService with ChangeNotifier {
   List<CampaignListItem> campaignList = [];
+  DateTime? endDate;
 
   fetchCampaignList(BuildContext context) async {
     if (campaignList.isNotEmpty) return;
@@ -19,6 +20,7 @@ class CampaignService with ChangeNotifier {
     var response = await http.get(Uri.parse(ApiUrl.campaignListUri));
 
     if (response.statusCode == 200 || response.statusCode == 201) {
+      debugPrint(response.body.toString());
       var data = CampaignListModel.fromJson(jsonDecode(response.body));
       campaignList = data.data;
       notifyListeners();
@@ -54,6 +56,13 @@ class CampaignService with ChangeNotifier {
     if (response.statusCode == 200) {
       var data = CampaignProductsModel.fromJson(jsonDecode(response.body));
       productList = data.products;
+      endDate = data.campaignInfo?.endDate;
+      debugPrint("End date is $endDate".toString());
+      debugPrint("'${ApiUrl.campaignProductsUri}/$id'".toString());
+      debugPrint(
+          "End campaign info is ${data.campaignInfo?.toJson()}.campaignInfo"
+              .toString());
+
       notifyListeners();
     }
   }

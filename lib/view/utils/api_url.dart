@@ -1,6 +1,6 @@
 class ApiUrl {
   static const String baseUri = 'https://hexfashion.xyz/api/tenant/v1';
-  // static const String baseUri = 'https://fornito.estores.app/api/tenant/v1';
+  // static const String baseUri = 'https://electro.nazmart.net/api/tenant/v1';
 
   static const String refundProductsListUri = '$baseUri/user/refund';
   static const String loginUri = '$baseUri/login';
@@ -21,6 +21,7 @@ class ApiUrl {
   static const String gatewayListUri = '$baseUri/payment-gateway-list';
   static const String addShippingUri = '$baseUri/user/add-shipping-address';
   static const String stateSearchUri = '$baseUri/search/state';
+  static const String citySearchUri = '$baseUri/search/city';
   static const String countrySearchUri = '$baseUri/search/country';
   static const String paymentUpdateUri = '$baseUri/update-payment';
   static const String removeShippingUri =
@@ -47,6 +48,7 @@ class ApiUrl {
   static const String categoryUri = '$baseUri/category';
   static const String childCategoryUri = '$baseUri/child-category';
   static const String stateListUri = '$baseUri/state';
+  static const String cityListUri = '$baseUri/city';
   static const String countryListUri = '$baseUri/country';
   static const String currencyUri = '$baseUri/get-currency-symbol';
   static const String discoverProductsUri = '$baseUri/product?name=&page';

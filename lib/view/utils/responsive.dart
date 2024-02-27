@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:no_name_ecommerce/services/translate_string_service.dart';
 
 late bool isIos;
+TranslateStringService? tsProvider;
 
 getScreenHeight(BuildContext context) {
   return MediaQuery.of(context).size.height;

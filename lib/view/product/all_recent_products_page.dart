@@ -119,6 +119,8 @@ class _AllRecentProductsPageState extends State<AllRecentProductsPage> {
                                             provider.allRecentProducts[i].prdId,
                                         isCartAble: provider
                                             .allRecentProducts[i].isCartAble,
+                                        taxOSR: provider
+                                            .allRecentProducts[i].taxOSR,
                                         ratingAverage: null,
                                         discountPercent: null,
                                         category: provider

@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:no_name_ecommerce/services/refund_ticket_service/refund_ticket_messages_service.dart';
@@ -52,6 +53,7 @@ class _RefundTicketChatPageState extends State<RefundTicketChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         elevation: 0,
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,

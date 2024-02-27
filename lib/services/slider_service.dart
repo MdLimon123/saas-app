@@ -10,26 +10,34 @@ import 'package:no_name_ecommerce/view/utils/api_url.dart';
 
 class SliderService with ChangeNotifier {
   List<SliderItem> sliderImageList = [];
+  bool noItems = false;
   fetchSlider(BuildContext context) async {
     if (sliderImageList.isNotEmpty) return;
+    // bool noItems = false;
+    // notifyListeners();
+    try {
+      var response = await http.get(Uri.parse(ApiUrl.sliderUri));
 
-    var response = await http.get(Uri.parse(ApiUrl.sliderUri));
+      if (response.statusCode == 200) {
+        var data = SliderModel.fromJson(jsonDecode(response.body));
 
-    if (response.statusCode == 200) {
-      var data = SliderModel.fromJson(jsonDecode(response.body));
-
-      sliderImageList = data.data;
+        sliderImageList = data.data;
+        // notifyListeners();
+      } else if (response.statusCode == 403) {
+        //no app permission
+        Navigator.pushReplacement<void, void>(
+          context,
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => const NoAppPermissionPage(),
+          ),
+        );
+      } else {
+        print('slider fetch error ${response.body}');
+      }
+    } finally {
+      print('slider has no item is $noItems');
+      noItems = sliderImageList.isEmpty;
       notifyListeners();
-    } else if (response.statusCode == 403) {
-      //no app permission
-      Navigator.pushReplacement<void, void>(
-        context,
-        MaterialPageRoute<void>(
-          builder: (BuildContext context) => const NoAppPermissionPage(),
-        ),
-      );
-    } else {
-      print('slider fetch error ${response.body}');
     }
   }
 }

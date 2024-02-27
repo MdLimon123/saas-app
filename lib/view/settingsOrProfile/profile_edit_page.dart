@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:no_name_ecommerce/services/dropdown_services/city_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/dropdown_services/country_dropdown_service.dart';
 import 'package:no_name_ecommerce/services/dropdown_services/state_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/profile_edit_service.dart';
@@ -41,35 +42,34 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   @override
   void initState() {
     super.initState();
+    final productDetails =
+        Provider.of<ProfileService>(context, listen: false).profileDetails;
 
-    fullNameController.text =
-        Provider.of<ProfileService>(context, listen: false)
-                .profileDetails
-                ?.userDetails
-                .name ??
-            '';
+    fullNameController.text = productDetails?.userDetails.name ?? '';
 
-    emailController.text = Provider.of<ProfileService>(context, listen: false)
-            .profileDetails
-            ?.userDetails
-            .email ??
-        '';
+    emailController.text = productDetails?.userDetails.email ?? '';
 
-    phoneController.text = Provider.of<ProfileService>(context, listen: false)
-            .profileDetails
-            ?.userDetails
-            .mobile ??
-        '';
-    addressController.text = Provider.of<ProfileService>(context, listen: false)
-            .profileDetails
-            ?.userDetails
-            .address ??
-        '';
-    cityController.text = Provider.of<ProfileService>(context, listen: false)
-            .profileDetails
-            ?.userDetails
-            .city ??
-        '';
+    phoneController.text = productDetails?.userDetails.mobile ?? '';
+    addressController.text = productDetails?.userDetails.address ?? '';
+    zipCodeController.text = productDetails?.userDetails.postalCode ?? '';
+    if (productDetails?.userDetails.userCountry != null) {
+      Provider.of<CountryDropdownService>(context, listen: false)
+          .setSelectedCountryId(productDetails?.userDetails.userCountry?.id);
+      Provider.of<CountryDropdownService>(context, listen: false)
+          .setCountryValue(productDetails?.userDetails.userCountry?.name);
+    }
+    if (productDetails?.userDetails.userState != null) {
+      Provider.of<StateDropdownService>(context, listen: false)
+          .setSelectedStatesId(productDetails?.userDetails.userState?.id);
+      Provider.of<StateDropdownService>(context, listen: false)
+          .setStatesValue(productDetails?.userDetails.userState?.name);
+    }
+    if (productDetails?.userDetails.city != null) {
+      Provider.of<CityDropdownService>(context, listen: false)
+          .setCityValue(productDetails?.userDetails.city?.name);
+      Provider.of<CityDropdownService>(context, listen: false)
+          .setSelectedCityId(productDetails?.userDetails.city?.id);
+    }
   }
 
   @override
@@ -122,33 +122,38 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const ProfileImagePick(),
+                              ProfileImagePick(),
 
                               // change image icon
-                              Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100),
-                                    color: primaryColor),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 13),
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                        'assets/svg/camera-white.svg'),
-                                    const SizedBox(
-                                      width: 6,
-                                    ),
-                                    Text(
-                                      ln.getString(ConstString.changePhoto),
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    )
-                                  ],
-                                ),
-                              ),
+                              // GestureDetector(
+                              //   onTap: () {
+
+                              //   },
+                              //   child: Container(
+                              //     decoration: BoxDecoration(
+                              //         borderRadius: BorderRadius.circular(100),
+                              //         color: primaryColor),
+                              //     padding: const EdgeInsets.symmetric(
+                              //         vertical: 8, horizontal: 13),
+                              //     child: Row(
+                              //       children: [
+                              //         SvgPicture.asset(
+                              //             'assets/svg/camera-white.svg'),
+                              //         const SizedBox(
+                              //           width: 6,
+                              //         ),
+                              //         Text(
+                              //           ln.getString(ConstString.changePhoto),
+                              //           style:
+                              //               const TextStyle(color: Colors.white),
+                              //         )
+                              //       ],
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
 
@@ -202,20 +207,20 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                           ),
 
                           //City
-                          labelCommon(ConstString.city),
-                          CustomInput(
-                            controller: cityController,
-                            validation: (value) {
-                              if (value == null || value.isEmpty) {
-                                return ln
-                                    .getString(ConstString.plzEnterYourCity);
-                              }
-                              return null;
-                            },
-                            hintText: ln.getString(ConstString.enterYourCity),
-                            paddingHorizontal: 20,
-                            textInputAction: TextInputAction.next,
-                          ),
+                          // labelCommon(ConstString.city),
+                          // CustomInput(
+                          //   controller: cityController,
+                          //   validation: (value) {
+                          //     if (value == null || value.isEmpty) {
+                          //       return ln
+                          //           .getString(ConstString.plzEnterYourCity);
+                          //     }
+                          //     return null;
+                          //   },
+                          //   hintText: ln.getString(ConstString.enterYourCity),
+                          //   paddingHorizontal: 20,
+                          //   textInputAction: TextInputAction.next,
+                          // ),
 
                           const CountryStatesDropdowns(),
 
@@ -289,18 +294,19 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
                                 //update profile
                                 var result = await provider.updateProfile(
-                                    context,
-                                    name: fullNameController.text,
-                                    email: emailController.text,
-                                    phone: phoneController.text,
-                                    zip: zipCodeController.text,
-                                    address: addressController.text,
-                                    city: cityController.text);
+                                  context,
+                                  name: fullNameController.text,
+                                  email: emailController.text,
+                                  phone: phoneController.text,
+                                  zip: zipCodeController.text,
+                                  address: addressController.text,
+                                );
                                 if (result == true || result == false) {
                                   localAnimationController.reverse();
                                 }
                               }
                             }
+                            // provider.setLoadingFalse();
                           },
                               isloading:
                                   provider.isloading == false ? false : true,

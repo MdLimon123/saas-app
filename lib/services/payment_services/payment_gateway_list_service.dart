@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, avoid_print
 
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:no_name_ecommerce/services/common_service.dart';
@@ -11,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PaymentGatewayListService with ChangeNotifier {
   List paymentList = [];
   bool? isTestMode;
+  bool cashOnD = false;
   var publicKey;
   var secretKey;
 
@@ -59,12 +61,23 @@ class PaymentGatewayListService with ChangeNotifier {
 
       var response =
           await http.get(Uri.parse(ApiUrl.gatewayListUri), headers: header);
-      print(response.body);
-      setLoadingFalse();
+      print("payment gateways${response.body}");
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         paymentList = jsonDecode(response.body)['data'];
+        log(response.body);
+        for (var element in paymentList) {
+          if (element['name'] == "cash_on_delivery") {
+            cashOnD = true;
+          }
+        }
+        if (cashOnD) {
+          paymentList
+              .removeWhere((element) => element['name'] == "cash_on_delivery");
+        }
+        setLoadingFalse();
       } else {
+        setLoadingFalse();
         //something went wrong
         print(response.body);
       }

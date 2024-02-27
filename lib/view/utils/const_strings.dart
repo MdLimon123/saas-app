@@ -24,7 +24,7 @@ class ConstString {
   static const String passMustBeSix = 'Password must be at least 6 characters';
   static const String resetPass = 'Reset password';
   static const String enterEmailToGetInstruction =
-      "Enter the email you used to creat account and we’ll send instruction for restting password";
+      "Enter the email you used to create account and we’ll send instruction for resting password";
   static const String enterEmail = "Enter email";
   static const String makeSureRepeatedPassCorrectly =
       'Make sure you repeated new password correctly';
@@ -42,16 +42,17 @@ class ConstString {
   static const String selectDepartment = 'Select Department';
   static const String open = 'Open';
   static const String close = 'Close';
-  static const String flutterwavePayment = "Flutterwave payment";
+  static const String flutterwavePayment = "Flutter-wave payment";
   static const String pay = "Pay";
   static const String ticketCreatedSuccessfully = 'Ticket created successfully';
   static const String youMustSelectAstate = 'You must select a state';
   static const String youMustSelectAcountry = 'You must select a country';
+  static const String youMustSelectACity = 'You must select a City';
   static const String addressSaved = 'Address saved';
   static const String priorityChanged = 'Priority changed';
   static const String statusChanged = 'Status changed';
   static const String selectCategory = 'Select Category';
-  static const String refundReqSuccessful = 'Refund request successfull';
+  static const String refundReqSuccessful = 'Refund request successfully';
   static const String selectChildCategory = 'Select child category';
   static const String plzCheckInternet =
       'Please check your internet connection';
@@ -71,9 +72,11 @@ class ConstString {
   static const String fullName = "Full name";
   static const String shippingName = "Shipping name";
   static const String plzEnterShippingName =
-      'Please enter shpping address name';
+      'Please enter shopping address name';
   static const String plzEnterFullName = 'Please enter your full name';
   static const String enterShippingName = "Enter shipping address name";
+  static const String mustSelectCountryStateCity =
+      'You must select a country, state, and city';
   static const String mustSelectCountryState =
       'You must select a country and state';
   static const String enterFullName = "Enter your full name";
@@ -94,7 +97,8 @@ class ConstString {
   static const String city = "City";
   static const String plzEnterYourCity = 'Please enter your city';
   static const String enterYourCity = "Enter your city";
-  static const String iAgreeTerms = "I agree with the terms and conditons";
+  static const String iAgreeTerms = "I agree with the terms and conditions";
+  static const String cashOnDelivery = "Cash on delivery";
   static const String createAccountWithTheseDetails =
       "Create account with these details";
   static const String signUp = "Sign up";
@@ -156,14 +160,15 @@ class ConstString {
   static const String products = 'Products';
   static const String quantity = 'Quantity';
   static const String refund = 'Refund';
+  static const String requestRefund = 'Request Refund';
   static const String plzEnterEmail = 'Please enter your email';
   static const String plzEnterPhone = 'Please enter your phone';
   static const String cityTown = "City/Town";
   static const String plzEnterCityTown = 'Please enter your city or town';
   static const String enterCityTown = "Enter your city/town";
-  static const String zipCode = "Zip code";
+  static const String zipCode = "Postal code";
   static const String plzEnterZip = 'Please enter your zip code';
-  static const String enterZip = "Enter your zip code";
+  static const String enterZip = "Enter your postal code";
   static const String address = "Address";
   static const String plzEnterAddress = 'Please enter your address';
   static const String enterAddress = "Enter your address";
@@ -187,7 +192,7 @@ class ConstString {
   static const String profileUpdatedSuccessfully =
       'Profile updated successfully';
   static const String failedToMakePaymentStatusSuccess =
-      'Failed to make payment status successfull';
+      'Failed to make payment status successfully';
   static const String orderSuccessful = 'Order successful';
   static const String orderPlacedSuccessfully = 'Order placed successfully';
   static const String orderPlacedIdIs =
@@ -196,6 +201,8 @@ class ConstString {
   static const String choosePayMethod = 'Choose payment method';
   static const String chooseImages = 'Choose images';
   static const String payConfirmOrder = 'Pay & Confirm order';
+  static const String youMustSelectAPaymentMethod =
+      'You must select a payment method';
   static const String youMustAgreeTerms =
       'You must agree with the terms and conditions to place the order';
   static const String privacyPolicy = 'Privacy policy';
@@ -218,7 +225,7 @@ class ConstString {
   static const String qtyIncreased = 'Quantity increased';
   static const String addedToCart = 'Added to cart';
   static const String accountInfoNotAvailable =
-      "Account information's are not available, please log in to check informations.";
+      "Account information's are not available, please log in to check information's.";
   static const String noProductFound = 'No product found';
   static const String desc = 'Description';
   static const String review = 'Review';
@@ -274,16 +281,20 @@ class ConstString {
   static const String changeStatus = 'Change status';
   static const String somethingWentWrong = "Something went wrong";
   static const String selectCountry = 'Select Country';
+  static const String selectState = 'Select State';
   static const String selectCity = 'Select City';
   static const String noCountryFound = 'No country found';
   static const String searchCountry = 'Search country';
   static const String searchState = 'Search state';
+  static const String searchCity = 'Search city';
   static const String noCityFound = 'No city found';
   static const String otpDidntMatch = "Otp didn't match";
   static const String otpFailedToSend = 'Otp failed to send';
   static const String invalidEmailOrPass = "Invalid Email or Password";
   static const String userLoggedOut = 'User logged out';
+  static const String clickToSee = 'Click to see';
   static const String youEnteredOtpCorrectButSomethingWrong =
       'You entered the otp correctly but something else went wrong';
+  static const String pressAgainToExit = "Press again to exit";
   // static const String welcome = ;
 }

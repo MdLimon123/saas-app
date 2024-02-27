@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:no_name_ecommerce/services/product_details_service.dart';
 import 'package:no_name_ecommerce/services/translate_string_service.dart';
 import 'package:no_name_ecommerce/view/checkout/components/cart_icon.dart';
@@ -68,6 +69,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         elevation: 0,
         backgroundColor: Colors.white,
         iconTheme: const IconThemeData(color: greyFour),

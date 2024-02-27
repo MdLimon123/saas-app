@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:no_name_ecommerce/services/cart_services/cart_service.dart';
+import 'package:no_name_ecommerce/services/cart_services/delivery_address_service.dart';
+import 'package:no_name_ecommerce/services/dropdown_services/country_dropdown_service.dart';
 import 'package:no_name_ecommerce/view/checkout/cart_page.dart';
 import 'package:no_name_ecommerce/view/utils/constant_colors.dart';
 import 'package:provider/provider.dart';
+
+import '../../../services/dropdown_services/city_dropdown_services.dart';
+import '../../../services/dropdown_services/state_dropdown_services.dart';
+import '../../../services/profile_service.dart';
 
 class CartIcon extends StatelessWidget {
   const CartIcon({
@@ -14,6 +20,31 @@ class CartIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        Provider.of<DeliveryAddressService>(context, listen: false)
+            .cleatDeliveryAddress();
+        final productDetails =
+            Provider.of<ProfileService>(context, listen: false).profileDetails;
+
+        Provider.of<CountryDropdownService>(context, listen: false)
+            .setSelectedCountryId(
+                productDetails?.userDetails.deliveryAddress?.countryId);
+        // Provider.of<CountryDropdownService>(context, listen: false)
+        //     .setCountryValue(productDetails?.userDetails.userCountry?.name);
+        Provider.of<StateDropdownService>(context, listen: false)
+            .setSelectedStatesId(
+                productDetails?.userDetails.deliveryAddress?.stateId);
+        // Provider.of<StateDropdownService>(context, listen: false)
+        //     .setStatesValue(productDetails?.userDetails.userState?.name);
+        Provider.of<CityDropdownService>(context, listen: false)
+            .setSelectedCityId(
+                productDetails?.userDetails.deliveryAddress?.city);
+        // Provider.of<CityDropdownService>(context, listen: false)
+        //     .setSelectedCityId(productDetails?.userDetails.city?.id);
+
+        Provider.of<DeliveryAddressService>(context, listen: false)
+            .fetchCountryStateShippingCost(context);
+        // Provider.of<CountryDropdownService>(context, listen: false)
+        //     .setDefault(context: context);
         Navigator.push(
           context,
           MaterialPageRoute<void>(
@@ -41,7 +72,7 @@ class CartIcon extends StatelessWidget {
                   decoration: const BoxDecoration(
                       shape: BoxShape.circle, color: primaryColor),
                   child: Text(
-                    '${p.cartProductsNumber}',
+                    '${p.totalQty}',
                     style: const TextStyle(color: Colors.white, fontSize: 13),
                   ),
                 ))

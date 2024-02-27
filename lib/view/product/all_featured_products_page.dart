@@ -110,6 +110,8 @@ class _AllFeaturedProductsPageState extends State<AllFeaturedProductsPage> {
                                                 placeHolderUrl,
                                             title: provider
                                                 .allFeaturedProducts[i].title,
+                                            taxOSR: provider
+                                                .allFeaturedProducts[i].taxOSR,
                                             width: 200,
                                             oldPrice: provider
                                                 .allFeaturedProducts[i].price,

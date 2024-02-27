@@ -70,13 +70,13 @@ class CustomInput extends StatelessWidget {
                   borderSide: BorderSide(color: inputFieldBorderColor),
                   borderRadius: BorderRadius.circular(borderRadius)),
               focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: primaryColor),
+                  borderSide: const BorderSide(color: primaryColor),
                   borderRadius: BorderRadius.circular(borderRadius)),
               errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(borderRadius),
-                  borderSide: BorderSide(color: warningColor)),
+                  borderSide: const BorderSide(color: warningColor)),
               focusedErrorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: primaryColor),
+                  borderSide: const BorderSide(color: primaryColor),
                   borderRadius: BorderRadius.circular(borderRadius)),
               hintText: hintText,
               contentPadding: EdgeInsets.symmetric(

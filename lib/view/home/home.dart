@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:no_name_ecommerce/model/recent_product_model.dart';
+import 'package:no_name_ecommerce/services/campaign_service.dart';
 import 'package:no_name_ecommerce/services/translate_string_service.dart';
 import 'package:no_name_ecommerce/services/common_service.dart';
 import 'package:no_name_ecommerce/view/home/components/categories_horizontal.dart';
@@ -30,6 +30,8 @@ class _HomepageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<CampaignService>(context, listen: false)
+        .fetchCampaignList(context);
     return Listener(
       onPointerDown: (_) {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -40,19 +42,20 @@ class _HomepageState extends State<Homepage> {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
-          child: SingleChildScrollView(
-            physics: globalPhysics,
-            child: Consumer<TranslateStringService>(
-              builder: (context, asProvider, child) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          child: Consumer<TranslateStringService>(
+            builder: (context, asProvider, child) =>
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              gapH(10),
+
+              //name and profile image
+              const HomeTop(),
+              Expanded(
+                  child: SingleChildScrollView(
+                physics: globalPhysics,
+                child: Column(
                   children: [
-                    gapH(10),
-
-                    //name and profile image
-                    const HomeTop(),
-
                     //Search bar ========>
-                    gapH(23),
+                    gapH(12),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 25),
                       child: InkWell(
@@ -69,8 +72,6 @@ class _HomepageState extends State<Homepage> {
                               HomepageHelper().searchbar(asProvider, context)),
                     ),
 
-                    gapH(24),
-
                     //Slider ========>
                     const SliderHome(),
 
@@ -83,10 +84,8 @@ class _HomepageState extends State<Homepage> {
                         //categories
                         const CategoriesHorizontal(),
 
-                        gapH(24),
                         const RecentProducts(),
 
-                        gapH(24),
                         //Featured product
                         const FeaturedProducts(),
 
@@ -96,8 +95,10 @@ class _HomepageState extends State<Homepage> {
                         const CampaignList(),
                       ]),
                     )
-                  ]),
-            ),
+                  ],
+                ),
+              ))
+            ]),
           ),
         ),
       ),

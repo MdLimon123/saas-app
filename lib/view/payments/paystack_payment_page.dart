@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:no_name_ecommerce/services/cart_services/cart_service.dart';
 import 'package:no_name_ecommerce/services/payment_services/payment_gateway_list_service.dart';
 import 'package:no_name_ecommerce/services/place_order_service.dart';
@@ -18,7 +19,9 @@ class PaystackPaymentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Paystack')),
+      appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          title: const Text('Paystack')),
       body: WillPopScope(
         onWillPop: () async {
           await showDialog(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutterzilla_fixed_grid/flutterzilla_fixed_grid.dart';
 import 'package:no_name_ecommerce/services/common_service.dart';
 import 'package:no_name_ecommerce/services/search_product_service.dart';
@@ -36,6 +37,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
           iconTheme: const IconThemeData(color: greyPrimary),
           title: Consumer<TranslateStringService>(
             builder: (context, ln, child) => Container(
@@ -126,6 +128,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                       title: provider.productList[i].title,
                                       width: 180,
                                       marginRight: 0,
+                                      taxOSR: provider.productList[i].taxOSR,
                                       discountPrice:
                                           provider.productList[i].discountPrice,
                                       oldPrice: provider.productList[i].price,

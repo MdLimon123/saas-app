@@ -100,14 +100,16 @@ class ProductsOfSearch {
     this.categoryId,
     this.subCategoryId,
     required this.childCategoryIds,
+    this.taxOSR,
   });
 
-  int? prdId;
+  dynamic prdId;
   String? title;
   String? imgUrl;
   double? campaignPercentage;
-  int? price;
-  int? discountPrice;
+  num? price;
+  dynamic taxOSR;
+  num? discountPrice;
   Badge? badge;
   bool? campaignProduct;
   int? stockCount;
@@ -124,12 +126,19 @@ class ProductsOfSearch {
         prdId: json["prd_id"],
         title: json["title"],
         imgUrl: json["img_url"],
+        taxOSR: json["tax_options_sum_rate"],
         campaignPercentage: json["campaign_percentage"].toDouble(),
-        price: json["price"],
-        discountPrice: json["discount_price"],
+        price: json["price"] is String
+            ? num.tryParse(json["price"])
+            : json["price"],
+        discountPrice: json["discount_price"] is String
+            ? num.tryParse(json["discount_price"])
+            : json["discount_price"],
         badge: Badge.fromJson(json["badge"]),
         campaignProduct: json["campaign_product"],
-        stockCount: json["stock_count"],
+        stockCount: json["stock_count"] is String
+            ? int.tryParse(json["stock_count"])
+            : json["stock_count"],
         avgRatting: json["avg_ratting"],
         isCartAble: json["is_cart_able"],
         vendorId: json["vendor_id"],

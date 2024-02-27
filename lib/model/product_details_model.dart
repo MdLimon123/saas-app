@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final productDetailsModel = productDetailsModelFromJson(jsonString);
-
 import 'dart:convert';
 
 ProductDetailsModel productDetailsModelFromJson(String str) =>
@@ -37,7 +33,7 @@ class ProductDetailsModel {
   dynamic availableAttributes;
   final dynamic productInventorySet;
   Map<String, AdditionalInfoStore>? additionalInfoStore;
-  int? maximumAvailablePrice;
+  num? maximumAvailablePrice;
   List<ProductColor> productColors;
   List<ProductColor> productSizes;
   List<dynamic> settingText;
@@ -61,7 +57,9 @@ class ProductDetailsModel {
             : Map.from(json["additional_info_store"]).map((k, v) =>
                 MapEntry<String, AdditionalInfoStore>(
                     k, AdditionalInfoStore.fromJson(v))),
-        maximumAvailablePrice: json["maximum_available_price"],
+        maximumAvailablePrice: json["maximum_available_price"] is String
+            ? num.tryParse(json["maximum_available_price"])
+            : json["maximum_available_price"],
         productColors: List<ProductColor>.from(
             json["productColors"].map((x) => ProductColor.fromJson(x))),
         productSizes: List<ProductColor>.from(
@@ -101,15 +99,19 @@ class AdditionalInfoStore {
   });
 
   int? pidId;
-  int? additionalPrice;
+  num? additionalPrice;
   int? stockCount;
   String? image;
 
   factory AdditionalInfoStore.fromJson(Map<String, dynamic> json) =>
       AdditionalInfoStore(
         pidId: json["pid_id"],
-        additionalPrice: json["additional_price"],
-        stockCount: json["stock_count"],
+        additionalPrice: json["additional_price"] is String
+            ? num.tryParse(json["additional_price"])
+            : json["additional_price"],
+        stockCount: json["stock_count"] is String
+            ? int.tryParse(json["stock_count"])
+            : json["stock_count"],
         image: json["image"],
       );
 
@@ -177,6 +179,7 @@ class Product {
     this.inventory,
     required this.galleryImages,
     required this.deliveryOption,
+    this.taxOSR,
   });
 
   int? id;
@@ -184,13 +187,14 @@ class Product {
   String? slug;
   String? summary;
   String? description;
-  int? price;
-  int? salePrice;
-  int? cost;
-  int? badgeId;
-  int? brandId;
-  int? statusId;
-  int? productType;
+  num? price;
+  num? salePrice;
+  dynamic taxOSR;
+  num? cost;
+  dynamic badgeId;
+  dynamic brandId;
+  dynamic statusId;
+  dynamic productType;
   dynamic soldCount;
   int? minPurchase;
   int? maxPurchase;
@@ -221,27 +225,47 @@ class Product {
         id: json["id"],
         name: json["name"],
         slug: json["slug"],
+        taxOSR: json["tax_options_sum_rate"],
         summary: json["summary"],
         description: json["description"],
-        price: json["price"],
-        salePrice: json["sale_price"],
-        cost: json["cost"],
+        price: json["price"] is String
+            ? num.tryParse(json["price"])
+            : json["price"],
+        salePrice: json["sale_price"] is String
+            ? num.tryParse(json["sale_price"])
+            : json["sale_price"],
+        cost:
+            json["cost"] is String ? num.tryParse(json["cost"]) : json["cost"],
         badgeId: json["badge_id"],
         brandId: json["brand_id"],
         statusId: json["status_id"],
         productType: json["product_type"],
         soldCount: json["sold_count"],
-        minPurchase: json["min_purchase"],
-        maxPurchase: json["max_purchase"],
-        isRefundable: json["is_refundable"],
-        isInHouse: json["is_in_house"],
-        isInventoryWarnAble: json["is_inventory_warn_able"],
+        minPurchase: json["min_purchase"] is String
+            ? num.tryParse(json["min_purchase"])?.toInt()
+            : json["min_purchase"],
+        maxPurchase: json["max_purchase"] is String
+            ? num.tryParse(json["max_purchase"])?.toInt()
+            : json["max_purchase"],
+        isRefundable: json["is_refundable"] is String
+            ? int.tryParse(json["is_refundable"])
+            : json["is_refundable"],
+        isInHouse: json["is_in_house"] is String
+            ? int.tryParse(json["is_in_house"])
+            : json["is_in_house"],
+        isInventoryWarnAble: json["is_inventory_warn_able"] is String
+            ? int.tryParse(json["is_inventory_warn_able"])
+            : json["is_inventory_warn_able"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         deletedAt: json["deleted_at"],
-        inventoryDetailCount: json["inventory_detail_count"],
+        inventoryDetailCount: json["inventory_detail_count"] is String
+            ? num.tryParse(json["inventory_detail_count"])?.toInt()
+            : json["inventory_detail_count"],
         reviewsAvgRating: json["reviews_avg_rating"],
-        reviewsCount: json["reviews_count"],
+        reviewsCount: json["reviews_count"] is String
+            ? num.tryParse(json["reviews_count"] ?? "")?.toInt()
+            : json["reviews_count"],
         image: json["image"],
         category: Category.fromJson(json["category"]),
         subCategory: Category.fromJson(json["sub_category"]),
@@ -411,7 +435,6 @@ class ProductColor {
         slug: json["slug"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
-        laravelThroughKey: json["laravel_through_key"],
         sizeCode: json['size_code'],
       );
 
@@ -440,8 +463,12 @@ class DeliveryOption {
 
   factory DeliveryOption.fromJson(Map<String, dynamic> json) => DeliveryOption(
         id: json["id"],
-        productId: json["product_id"],
-        deliveryOptionId: json["delivery_option_id"],
+        productId: json["product_id"] is String
+            ? int.tryParse(json["product_id"])
+            : json["product_id"],
+        deliveryOptionId: json["delivery_option_id"] is String
+            ? int.tryParse(json["delivery_option_id"])
+            : json["delivery_option_id"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -461,7 +488,9 @@ class GalleryImage {
   String? image;
 
   factory GalleryImage.fromJson(Map<String, dynamic> json) => GalleryImage(
-        userType: json["user_type"],
+        userType: json["user_type"] is String
+            ? int.tryParse(json["user_type"])
+            : json["user_type"],
         image: json["image"],
       );
 
@@ -528,32 +557,46 @@ class InventoryDetail {
   String? color;
   String? size;
   String? hash;
-  int? additionalPrice;
-  int? addCost;
+  num? additionalPrice;
+  num? addCost;
   int? image;
   int? stockCount;
   int? soldCount;
   List<Attribute> attribute;
-  AttrImage attrImage;
+  AttrImage? attrImage;
   ProductColor? productColor;
   ProductColor? productSize;
 
   factory InventoryDetail.fromJson(Map<String, dynamic> json) =>
       InventoryDetail(
         id: json["id"],
-        productInventoryId: json["product_inventory_id"],
-        productId: json["product_id"],
+        productInventoryId: json["product_inventory_id"] is String
+            ? int.tryParse(json["product_inventory_id"])
+            : json["product_inventory_id"],
+        productId: json["product_id"] is String
+            ? int.tryParse(json["product_id"])
+            : json["product_id"],
         color: json["color"],
         size: json["size"],
         hash: json["hash"],
-        additionalPrice: json["additional_price"],
-        addCost: json["add_cost"],
+        additionalPrice: json["additional_price"] is String
+            ? num.tryParse(json["additional_price"])
+            : json["additional_price"],
+        addCost: json["add_cost"] is String
+            ? num.tryParse(json["add_cost"])
+            : json["add_cost"],
         image: json["image"],
-        stockCount: json["stock_count"],
-        soldCount: json["sold_count"],
+        stockCount: json["stock_count"] is String
+            ? int.tryParse(json["stock_count"])
+            : json["stock_count"],
+        soldCount: json["sold_count"] is String
+            ? int.tryParse(json["sold_count"])
+            : json["sold_count"],
         attribute: List<Attribute>.from(
             json["attribute"].map((x) => Attribute.fromJson(x))),
-        attrImage: AttrImage.fromJson(json["attr_image"]),
+        attrImage: json["attr_image"] == null
+            ? null
+            : AttrImage.fromJson(json["attr_image"]),
         productColor: ProductColor.fromJson(json["product_color"]),
         productSize: ProductColor.fromJson(json["product_size"]),
       );
@@ -571,7 +614,7 @@ class InventoryDetail {
         "stock_count": stockCount,
         "sold_count": soldCount,
         "attribute": List<dynamic>.from(attribute.map((x) => x.toJson())),
-        "attr_image": attrImage.toJson(),
+        "attr_image": attrImage?.toJson(),
         "product_color": productColor?.toJson(),
         "product_size": productSize?.toJson(),
       };
@@ -594,7 +637,9 @@ class ReturnPolicy {
 
   factory ReturnPolicy.fromJson(Map<String, dynamic> json) => ReturnPolicy(
         id: json["id"],
-        productId: json["product_id"],
+        productId: json["product_id"] is String
+            ? int.tryParse(json["product_id"])
+            : json["product_id"],
         shippingReturnDescription: json["shipping_return_description"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
@@ -626,7 +671,7 @@ class AttrImage {
   int? id;
   String? title;
   String? path;
-  dynamic? alt;
+  dynamic alt;
   String? size;
   int? userType;
   int? userId;
@@ -775,7 +820,9 @@ class Tag {
   factory Tag.fromJson(Map<String, dynamic> json) => Tag(
         id: json["id"],
         tagName: json["tag_name"],
-        productId: json["product_id"],
+        productId: json["product_id"] is String
+            ? int.tryParse(json["product_id"])
+            : json["product_id"],
       );
 
   Map<String, dynamic> toJson() => {

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:no_name_ecommerce/services/payment_services/payment_gateway_list_service.dart';
 import 'package:no_name_ecommerce/services/place_order_service.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +31,7 @@ class MidtransPayment extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: const Text('Midtrans'),
       ),
       body: FutureBuilder(
@@ -42,13 +44,13 @@ class MidtransPayment extends StatelessWidget {
             }
             if (snapshot.hasData) {
               return const Center(
-                child: Text('Loding failed.'),
+                child: Text('Loading failed.'),
               );
             }
             if (snapshot.hasError) {
               print(snapshot.error);
               return const Center(
-                child: Text('Loding failed.'),
+                child: Text('Loading failed.'),
               );
             }
             return WebView(

@@ -174,6 +174,7 @@ class _FavouriteItemListPageState extends State<FavouriteItemListPage> {
                                                         .favItemList[i]['productId']
                                                         .toString(),
                                                     category: fProvider.favItemList[i]['category'],
+                                                    taxOSR: fProvider.favItemList[i]['tax_options_sum_rate'],
                                                     subcategory: fProvider.favItemList[i]['subcategory'],
                                                     childCategory: fProvider.favItemList[i]['childCategory'],
                                                     attributes: {},
@@ -202,6 +203,10 @@ class _FavouriteItemListPageState extends State<FavouriteItemListPage> {
                                                       fProvider.favItemList[i]
                                                               ['title'] ??
                                                           '',
+                                                  taxOSR: fProvider
+                                                              .favItemList[i][
+                                                          'tax_options_sum_rate'] ??
+                                                      '',
                                                   attributes: null,
                                                   category: null,
                                                   childCategory: null,
@@ -247,11 +252,13 @@ class _FavouriteItemListPageState extends State<FavouriteItemListPage> {
                                 ),
                               ),
                             ),
-                            titleCommon(ConstString.nothingInWishlist,
-                                fontweight: FontWeight.w600, fontsize: 23),
+                            titleCommon(
+                                ln.getString(ConstString.nothingInWishlist),
+                                fontweight: FontWeight.w600,
+                                fontsize: 23),
                             gapH(10),
-                            paragraphCommon(
-                                ConstString.nothingInWishlistAddFromStore)
+                            paragraphCommon(ln.getString(
+                                ConstString.nothingInWishlistAddFromStore))
                           ],
                         ),
                       ),

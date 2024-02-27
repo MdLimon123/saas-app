@@ -3,6 +3,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:no_name_ecommerce/services/dropdown_services/city_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/dropdown_services/country_dropdown_service.dart';
 import 'package:no_name_ecommerce/services/dropdown_services/state_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/profile_service.dart';
@@ -51,75 +52,83 @@ class ProfileEditService with ChangeNotifier {
     notifyListeners();
   }
 
-  updateProfile(context,
-      {required name,
-      required email,
-      required phone,
-      required zip,
-      required address,
-      required city}) async {
-    var ln = Provider.of<TranslateStringService>(context, listen: false);
+  updateProfile(
+    context, {
+    required name,
+    required email,
+    required phone,
+    required zip,
+    required address,
+  }) async {
+    try {
+      var ln = Provider.of<TranslateStringService>(context, listen: false);
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString('token');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString('token');
 
-    var countryName =
-        Provider.of<CountryDropdownService>(context, listen: false)
-            .selectedCountry;
+      var countryId =
+          Provider.of<CountryDropdownService>(context, listen: false)
+              .selectedCountryId;
 
-    var stateName =
-        Provider.of<StateDropdownService>(context, listen: false).selectedState;
+      var stateId = Provider.of<StateDropdownService>(context, listen: false)
+          .selectedStateId;
+      var cityId = Provider.of<CityDropdownService>(context, listen: false)
+          .selectedCityId;
 
-    setLoadingTrue();
+      setLoadingTrue();
 
-    var dio = Dio();
-    // dio.options.headers['Accept'] = 'application/json';
-    dio.options.headers['Content-Type'] = 'multipart/form-data';
-    dio.options.headers["Authorization"] = "Bearer $token";
+      var dio = Dio();
+      // dio.options.headers['Accept'] = 'application/json';
+      dio.options.headers['Content-Type'] = 'multipart/form-data';
+      dio.options.headers["Authorization"] = "Bearer $token";
 
-    FormData formData;
+      FormData formData;
 
-    formData = FormData.fromMap({
-      'name': name,
-      'email': email,
-      'phone': phone,
-      'file': imageFile != null
-          ? await MultipartFile.fromFile(imageFile!.path,
-              filename: 'profileImage$name$zip${imageFile!.path}.jpg')
-          : null,
-      'country': countryName,
-      'state': stateName,
-      'address': address,
-      'city': city,
-      'zip_code': zip,
-      'user_type': 'api'
-    });
+      formData = FormData.fromMap({
+        'full_name': name,
+        'email': email,
+        'mobile': phone,
+        'file': imageFile != null
+            ? await MultipartFile.fromFile(imageFile!.path,
+                filename: 'profileImage$name$zip${imageFile!.path}.jpg')
+            : null,
+        'country_id': countryId.toString(),
+        'state_id': stateId.toString(),
+        'address': address,
+        'city_id': cityId.toString(),
+        'postal_code': zip,
+        'user_type': 'api'
+      });
 
-    var response = await dio.post(
-      ApiUrl.updateProfileUri,
-      data: formData,
-    );
+      var response = await dio.post(ApiUrl.updateProfileUri,
+          data: formData,
+          options: Options(
+            validateStatus: (status) => true,
+          ));
+      debugPrint(response.data.toString());
 
-    if (response.statusCode == 200) {
+      if (response.statusCode == 200) {
+        setLoadingFalse();
+        showToast(
+            ln.getString(ConstString.profileUpdatedSuccessfully), Colors.black);
+        print(response.data);
+
+        //re fetch profile data again
+        await Provider.of<ProfileService>(context, listen: false)
+            .getProfileDetails(context, loadAnyway: true);
+
+        // Future.delayed(const Duration(microseconds: 1600), () {
+        Navigator.pop(context);
+        // });
+
+        return true;
+      } else {
+        print('error updating profile' + response.data);
+        showToast(ln.getString(ConstString.somethingWentWrong), Colors.black);
+        return false;
+      }
+    } finally {
       setLoadingFalse();
-      showToast(
-          ln.getString(ConstString.profileUpdatedSuccessfully), Colors.black);
-      print(response.data);
-
-      //re fetch profile data again
-      await Provider.of<ProfileService>(context, listen: false)
-          .getProfileDetails(context, loadAnyway: true);
-
-      // Future.delayed(const Duration(microseconds: 1600), () {
-      Navigator.pop(context);
-      // });
-
-      return true;
-    } else {
-      setLoadingFalse();
-      print('error updating profile' + response.data);
-      showToast(ln.getString(ConstString.somethingWentWrong), Colors.black);
-      return false;
     }
   }
 }

@@ -9,6 +9,7 @@ import 'package:no_name_ecommerce/services/auth_services/login_service.dart';
 import 'package:no_name_ecommerce/services/auth_services/signup_service.dart';
 import 'package:no_name_ecommerce/services/cart_services/cart_service.dart';
 import 'package:no_name_ecommerce/services/cart_services/coupon_service.dart';
+import 'package:no_name_ecommerce/services/dropdown_services/city_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/dropdown_services/country_dropdown_service.dart';
 import 'package:no_name_ecommerce/services/dropdown_services/state_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/profile_service.dart';
@@ -19,6 +20,8 @@ import 'package:no_name_ecommerce/view/utils/others_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../product_db_service.dart';
+
 class DeliveryAddressService with ChangeNotifier {
   Map enteredDeliveryAddress = {};
 
@@ -27,11 +30,13 @@ class DeliveryAddressService with ChangeNotifier {
 
   late int selectedShipId;
   var selectedShipName = '';
-  var selectedShipCost = 0;
+  num selectedShipCost = 0;
   int defaultShipId = 0;
   var defaultShipName = '';
+  List productTaxes = [];
 
-  var vatAmount = 0.0;
+  num vatAmount = 0.0;
+  num pTax = 0.0;
   dynamic vatPercentage = 0;
 
   int selectedShippingIndex = -1;
@@ -55,6 +60,7 @@ class DeliveryAddressService with ChangeNotifier {
   }
 
   setSelectedShipIndex(value) {
+    debugPrint("shipping index is $value".toString());
     selectedShippingIndex = value;
     notifyListeners();
   }
@@ -67,13 +73,22 @@ class DeliveryAddressService with ChangeNotifier {
     notifyListeners();
   }
 
-  setVatAndincreaseTotal(newVatPercent, BuildContext context) {
-    vatPercentage = newVatPercent;
+  cleatDeliveryAddress() {
+    shippingCostDetails = null;
+    pTax = 0.0;
+    productTaxes = [];
+    enteredDeliveryAddress = {};
+    selectedShipCost = 0.0;
+    selectedShippingIndex = 0;
+    selectedShipName = '-';
+  }
 
-    var subtotal = Provider.of<CartService>(context, listen: false).subTotal;
+  setVatAndincreaseTotal(newVatPercent, BuildContext context) async {
+    pTax = await calculateProductTaxes(context, productTaxes) ?? 0;
+    debugPrint("product tax is $pTax".toString());
 
     var oldVat = vatAmount;
-    vatAmount = (subtotal * newVatPercent) / 100;
+    vatAmount = (shippingCostDetails?.tax ?? 0) + pTax;
 
     print('set vat fun ran');
 
@@ -81,6 +96,30 @@ class DeliveryAddressService with ChangeNotifier {
         .increaseTotal(oldVat, vatAmount);
 
     notifyListeners();
+  }
+
+  calculateProductTaxes(BuildContext context, List productTaxes) async {
+    if (productTaxes.isEmpty) {
+      return 0;
+    }
+    List products = await ProductDbService().allCartProducts();
+
+    num totalTax = 0;
+    if (products.isNotEmpty) {
+      for (var ele in productTaxes) {
+        for (int i = 0; i < products.length; i++) {
+          if (products[i]["productId"].toString() ==
+              ele["product_id"].toString()) {
+            totalTax =
+                totalTax + (((ele["tax_amount"] ?? 0)) * products[i]["qty"]);
+            break;
+          }
+        }
+      }
+    } else {
+      totalTax = 0;
+    }
+    return totalTax;
   }
 
   calculateVatAmountOnly(BuildContext context) {
@@ -128,17 +167,31 @@ class DeliveryAddressService with ChangeNotifier {
         .selectedCountryId;
     var stateId = Provider.of<StateDropdownService>(context, listen: false)
         .selectedStateId;
+    var cityId =
+        Provider.of<CityDropdownService>(context, listen: false).selectedCityId;
 
+    List products = await ProductDbService().allCartProducts();
+    List productIds = [];
+    debugPrint(products.toString());
+    for (var element in products) {
+      productIds.add(element["productId"].toString());
+    }
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var header = {
       "Accept": "application/json",
       "Authorization": "Bearer $token",
     };
-    var data = {'country': countryId.toString(), 'state': stateId.toString()};
+    var body = {
+      'country': countryId.toString(),
+      'state': stateId.toString(),
+      'city': cityId.toString(),
+      "product_ids": productIds.toString(),
+    };
+    debugPrint(body.toString());
 
     var response = await http.post(Uri.parse(ApiUrl.shippingCostUri),
-        headers: header, body: data);
+        headers: header, body: body);
 
     setLoadingFalse();
 
@@ -146,18 +199,46 @@ class DeliveryAddressService with ChangeNotifier {
       var data = ShippingCostModel.fromJson(jsonDecode(response.body));
 
       shippingCostDetails = data;
+      debugPrint("potome ashce".toString());
+      productTaxes = data.productTaxes;
 
-      setShipIdAndCosts(
-          data.defaultShippingOptions?.options?.shippingMethodId ?? 0,
-          data.defaultShippingOptions?.options?.cost,
-          data.defaultShippingOptions?.name,
-          context);
+      try {
+        if (data.defaultShippingOptions?.options?.shippingMethodId != null) {
+          setShipIdAndCosts(
+              data.defaultShippingOptions?.options?.shippingMethodId ??
+                  data.shippingOptions.first.id ??
+                  0,
+              data.defaultShippingOptions?.options?.cost ??
+                  data.shippingOptions.first.options?.cost,
+              data.defaultShippingOptions?.name ??
+                  data.shippingOptions.first.name,
+              context);
+
+          setSelectedShipIndex(data.shippingOptions.indexWhere((element) =>
+              element.id.toString() ==
+              data.defaultShippingOptions?.options?.shippingMethodId));
+        } else if (data.shippingOptions.isNotEmpty) {
+          setSelectedShipIndex(0);
+          setShipIdAndCosts(
+              data.defaultShippingOptions?.options?.shippingMethodId ??
+                  data.shippingOptions[0].id ??
+                  0,
+              data.defaultShippingOptions?.options?.cost ??
+                  data.shippingOptions[0].options?.cost,
+              data.defaultShippingOptions?.name ?? data.shippingOptions[0].name,
+              context);
+        }
+      } catch (e) {
+        setShipIdAndCosts(0, 0, '', context);
+      }
 
       defaultShipId =
           data.defaultShippingOptions?.options?.shippingMethodId ?? 0;
       defaultShipName = data.defaultShippingOptions?.name ?? '';
+      debugPrint(response.body.toString());
+      debugPrint("poreo asce".toString());
 
-      setVatAndincreaseTotal(data.tax?.toDouble() ?? 0, context);
+      await setVatAndincreaseTotal(data.tax?.toDouble() ?? 0, context);
 
       notifyListeners();
 
@@ -205,15 +286,16 @@ class DeliveryAddressService with ChangeNotifier {
       }
     }
 
-    var res = await Provider.of<SignupService>(context, listen: false).signup(
-        context,
-        userName: enteredDeliveryAddress['name'],
-        password: enteredDeliveryAddress['pass'],
-        fullName: enteredDeliveryAddress['name'],
-        email: enteredDeliveryAddress['email'],
-        mobile: enteredDeliveryAddress['phone'],
-        cityName: enteredDeliveryAddress['city'],
-        isFromDeliveryAddressPage: true);
+    var res =
+        await Provider.of<SignupService>(context, listen: false).signup(context,
+            userName: enteredDeliveryAddress['name'],
+            password: enteredDeliveryAddress['pass'],
+            fullName: enteredDeliveryAddress['name'],
+            email: enteredDeliveryAddress['email'],
+            mobile: enteredDeliveryAddress['phone'],
+            // cityName: enteredDeliveryAddress['city'],
+            zipCode: enteredDeliveryAddress['zipCode'],
+            isFromDeliveryAddressPage: true);
 
     if (res == true) {
       await Provider.of<LoginService>(context, listen: false).login(

@@ -38,7 +38,7 @@ class OrderService with ChangeNotifier {
       orderList = [];
       notifyListeners();
 
-      setCurrentPage(currentPage);
+      setCurrentPage(1);
     } else {}
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -87,7 +87,7 @@ class OrderService with ChangeNotifier {
     } else {
       print(response.body);
 
-      hasOrder = false;
+      hasOrder = orderList.isNotEmpty;
       notifyListeners();
       return false;
     }

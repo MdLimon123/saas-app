@@ -15,25 +15,28 @@ class ShippingCostModel {
     this.tax,
     required this.shippingOptions,
     this.defaultShippingOptions,
+    this.productTaxes,
   });
 
-  dynamic tax;
+  num? tax;
   List<DefaultShippingOptions> shippingOptions;
   DefaultShippingOptions? defaultShippingOptions;
+  dynamic productTaxes;
 
   factory ShippingCostModel.fromJson(Map<dynamic, dynamic> json) =>
       ShippingCostModel(
-        tax: json["tax"],
-        shippingOptions: List<DefaultShippingOptions>.from(
-            json["shipping_options"]
-                .map((x) => DefaultShippingOptions.fromJson(x))),
-        defaultShippingOptions: json["default_shipping_options"] != null
-            ? DefaultShippingOptions.fromJson(json["default_shipping_options"])
-            : null,
-      );
+          tax: json["tax"] is String ? num.tryParse(json["tax"]) : json["tax"],
+          shippingOptions: List<DefaultShippingOptions>.from(
+              json["shipping_options"]
+                  .map((x) => DefaultShippingOptions.fromJson(x))),
+          defaultShippingOptions: json["default_shipping_options"] != null
+              ? DefaultShippingOptions.fromJson(
+                  json["default_shipping_options"])
+              : null,
+          productTaxes: json["product_tax_info"]);
 
   Map<dynamic, dynamic> toJson() => {
-        "tax": tax,
+        // "tax": tax,
         "shipping_options":
             List<dynamic>.from(shippingOptions.map((x) => x.toJson())),
         "default_shipping_options": defaultShippingOptions?.toJson(),
@@ -111,7 +114,9 @@ class Options {
   factory Options.fromJson(Map<dynamic, dynamic> json) => Options(
         id: json["id"],
         title: json["title"],
-        shippingMethodId: json["shipping_method_id"],
+        shippingMethodId: json["shipping_method_id"] is String
+            ? int.tryParse(json["shipping_method_id"])
+            : json["shipping_method_id"],
         status: json["status"],
         taxStatus: json["tax_status"],
         settingPreset: json["setting_preset"],

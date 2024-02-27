@@ -2,6 +2,7 @@
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:no_name_ecommerce/services/ticket_services/support_ticket_service.dart';
 import 'package:no_name_ecommerce/services/translate_string_service.dart';
 import 'package:no_name_ecommerce/view/support_ticket/components/support_ticket_helper.dart';
@@ -35,6 +36,7 @@ class _MyTicketsPageState extends State<MyTicketsPage> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
           iconTheme: const IconThemeData(color: greyPrimary),
           title: Consumer<TranslateStringService>(
             builder: (context, ln, child) => Text(

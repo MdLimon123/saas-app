@@ -123,6 +123,8 @@ class _ProductsByCategoryPageState extends State<ProductsByCategoryPage> {
                                           width: 200,
                                           oldPrice:
                                               provider.productList[i].price,
+                                          taxOSR:
+                                              provider.productList[i].taxOSR,
                                           discountPrice: provider
                                               .productList[i].discountPrice,
                                           marginRight: 5,

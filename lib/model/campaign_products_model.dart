@@ -17,18 +17,20 @@ class CampaignProductsModel {
   });
 
   List<CampaignSingleProduct> products;
-  CampaignInfo campaignInfo;
+  CampaignInfo? campaignInfo;
 
   factory CampaignProductsModel.fromJson(Map<String, dynamic> json) =>
       CampaignProductsModel(
         products: List<CampaignSingleProduct>.from(
             json["products"].map((x) => CampaignSingleProduct.fromJson(x))),
-        campaignInfo: CampaignInfo.fromJson(json["campaign_info"]),
+        campaignInfo: json["campaign_info"] == null
+            ? null
+            : CampaignInfo.fromJson(json["campaign_info"]),
       );
 
   Map<String, dynamic> toJson() => {
         "products": List<dynamic>.from(products.map((x) => x.toJson())),
-        "campaign_info": campaignInfo.toJson(),
+        "campaign_info": campaignInfo?.toJson(),
       };
 }
 
@@ -110,6 +112,7 @@ class CampaignSingleProduct {
     this.categoryId,
     this.subCategoryId,
     this.childCategoryIds,
+    this.taxOSR,
   });
 
   var prdId;
@@ -119,6 +122,7 @@ class CampaignSingleProduct {
   var price;
   var discountPrice;
   Badge? badge;
+  dynamic taxOSR;
   bool? campaignProduct;
   var stockCount;
   dynamic avgRatting;
@@ -134,6 +138,7 @@ class CampaignSingleProduct {
         prdId: json["prd_id"],
         title: json["title"],
         imgUrl: json["img_url"],
+        taxOSR: json["tax_options_sum_rate"],
         campaignPercentage: json["campaign_percentage"].toDouble(),
         price: json["price"],
         discountPrice: json["discount_price"],

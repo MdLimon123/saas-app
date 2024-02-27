@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:no_name_ecommerce/model/dropdown_models/country_dropdown_model.dart';
+import 'package:no_name_ecommerce/services/dropdown_services/city_dropdown_services.dart';
+import 'package:no_name_ecommerce/services/dropdown_services/state_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/profile_service.dart';
 import 'package:no_name_ecommerce/view/utils/api_url.dart';
 import 'package:no_name_ecommerce/view/utils/const_strings.dart';
@@ -38,7 +40,7 @@ class CountryDropdownService with ChangeNotifier {
   }
 
   setSelectedCountryId(value) {
-    selectedCountryId = value;
+    selectedCountryId = value ?? defaultId;
     print('selected country id $value');
     notifyListeners();
   }
@@ -53,11 +55,17 @@ class CountryDropdownService with ChangeNotifier {
     notifyListeners();
   }
 
-  setDefault() {
+  setDefault({context}) {
     countryDropdownList = [];
     countryDropdownIndexList = [];
     selectedCountry = ConstString.selectCountry;
+    currentPage = 1;
     selectedCountryId = defaultId;
+    if (context != null) {
+      Provider.of<StateDropdownService>(context, listen: false)
+          .setStateDefault();
+      Provider.of<CityDropdownService>(context, listen: false).setCityDefault();
+    }
     notifyListeners();
   }
 
@@ -70,7 +78,7 @@ class CountryDropdownService with ChangeNotifier {
       //we are make the list empty when the sub category or brand is selected because then the refresh is true
       setDefault();
 
-      setCurrentPage(currentPage);
+      setCurrentPage(1);
     }
 
     if (countryDropdownList.isEmpty) {
@@ -120,7 +128,8 @@ class CountryDropdownService with ChangeNotifier {
     selectedCountry = Provider.of<ProfileService>(context, listen: false)
             .profileDetails
             ?.userDetails
-            .country ??
+            .userCountry
+            ?.name ??
         ConstString.selectCountry;
     selectedCountryId = Provider.of<ProfileService>(context, listen: false)
             .profileDetails

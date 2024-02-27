@@ -134,8 +134,11 @@ class ProfileDetails extends StatelessWidget {
                               '${profileProvider.profileDetails?.userDetails.email}',
                               icon: 'assets/svg/email.svg',
                             ),
-                            bRow(ln.getString(ConstString.country),
-                                '${profileProvider.profileDetails?.userDetails.country}',
+                            bRow(
+                                ln.getString(ConstString.country),
+                                profileProvider.profileDetails?.userDetails
+                                        .userCountry?.name ??
+                                    "-",
                                 icon: 'assets/svg/location.svg',
                                 lastItem: true),
                           ]),
@@ -158,7 +161,8 @@ class ProfileDetails extends StatelessWidget {
                       gapH(6),
                       titleCommon(ln.getString(ConstString.notLoggedIn)),
                       gapH(5),
-                      paragraphCommon(ConstString.accountInfoNotAvailable),
+                      paragraphCommon(
+                          ln.getString(ConstString.accountInfoNotAvailable)),
                       gapH(15),
                       Container(
                         margin: const EdgeInsets.only(bottom: 20),

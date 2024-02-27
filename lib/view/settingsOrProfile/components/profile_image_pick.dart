@@ -38,6 +38,10 @@ class _ProfileImagePickState extends State<ProfileImagePick> {
                         },
                         child: Stack(
                           children: [
+                            const SizedBox(
+                              width: 95,
+                              height: 95,
+                            ),
                             Container(
                               width: 85,
                               height: 85,

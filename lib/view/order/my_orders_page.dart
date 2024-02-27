@@ -34,11 +34,10 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
       body: SmartRefresher(
         controller: refreshController,
         enablePullUp: true,
-        enablePullDown:
-            context.watch<OrderService>().currentPage > 1 ? false : true,
+        enablePullDown: true,
         onRefresh: () async {
           final result = await Provider.of<OrderService>(context, listen: false)
-              .fetchOrderList(context);
+              .fetchOrderList(context, isrefresh: true);
           if (result) {
             refreshController.refreshCompleted();
           } else {

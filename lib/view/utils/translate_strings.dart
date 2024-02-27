@@ -267,5 +267,18 @@ var translateStrings = {
   ConstString.makeSureRepeatedPassCorrectly:
       ConstString.makeSureRepeatedPassCorrectly,
   ConstString.createAccountWithTheseDetails:
-      ConstString.createAccountWithTheseDetails
+      ConstString.createAccountWithTheseDetails,
+  ConstString.pressAgainToExit: ConstString.pressAgainToExit,
+  ConstString.clickToSee: ConstString.clickToSee,
+  ConstString.cashOnDelivery: ConstString.cashOnDelivery,
+  ConstString.youMustSelectAPaymentMethod:
+      ConstString.youMustSelectAPaymentMethod,
+  ConstString.youMustSelectACity: ConstString.youMustSelectACity,
+  ConstString.selectState: ConstString.selectState,
+  ConstString.searchCity: ConstString.searchCity,
+  ConstString.requestRefund: ConstString.requestRefund,
+  ConstString.youMustSelectAPaymentMethod:
+      ConstString.youMustSelectAPaymentMethod,
+  ConstString.youMustSelectAPaymentMethod:
+      ConstString.youMustSelectAPaymentMethod,
 };

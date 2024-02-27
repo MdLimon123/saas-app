@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:no_name_ecommerce/services/cart_services/coupon_service.dart';
+import 'package:no_name_ecommerce/services/cart_services/delivery_address_service.dart';
 import 'package:no_name_ecommerce/services/translate_string_service.dart';
 import 'package:no_name_ecommerce/view/utils/const_strings.dart';
 import 'package:no_name_ecommerce/view/utils/constant_styles.dart';
@@ -37,21 +38,33 @@ class CouponField extends StatelessWidget {
                   controller: couponController,
                   marginBottom: 0,
                 )),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 10),
-                  width: 100,
-                  child: buttonPrimary(ConstString.apply, () {
-                    if (couponController.text.isEmpty) {
-                      showToast(ln.getString(ConstString.plzEnterCouponFirst),
-                          Colors.black);
-                      return;
-                    }
-                    if (couponProvider.isloading == false) {
-                      couponProvider.getCouponDiscount(
-                          cartItemList, couponController.text, context);
-                    }
-                  }, isloading: couponProvider.isloading, borderRadius: 100),
-                )
+                Consumer<DeliveryAddressService>(
+                    builder: (context, dProvider, child) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    width: 100,
+                    child: buttonPrimary(
+                        ConstString.apply,
+                        dProvider.isLoading
+                            ? () {}
+                            : () {
+                                if (couponController.text.isEmpty) {
+                                  showToast(
+                                      ln.getString(
+                                          ConstString.plzEnterCouponFirst),
+                                      Colors.black);
+                                  return;
+                                }
+                                if (couponProvider.isloading == false) {
+                                  couponProvider.getCouponDiscount(cartItemList,
+                                      couponController.text, context);
+                                }
+                              },
+                        isloading: couponProvider.isloading,
+                        borderRadius: 100,
+                        bgColor: dProvider.isLoading ? Colors.black26 : null),
+                  );
+                })
               ],
             ),
           ],

@@ -2,6 +2,7 @@
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:no_name_ecommerce/services/refund_ticket_service/refund_ticket_service.dart';
 import 'package:no_name_ecommerce/services/translate_string_service.dart';
 import 'package:no_name_ecommerce/view/refund_products/refund_support_ticket/create_refund_ticket_page.dart';
@@ -34,6 +35,7 @@ class _RefundTicketsPageState extends State<RefundTicketsPage> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
           iconTheme: const IconThemeData(color: greyPrimary),
           title: Consumer<TranslateStringService>(
             builder: (context, ln, child) => Text(

@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:no_name_ecommerce/services/payment_services/payment_gateway_list_service.dart';
 import 'package:no_name_ecommerce/services/place_order_service.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +31,7 @@ class PayfastPayment extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: const Text('Payfast'),
       ),
       body: FutureBuilder(
@@ -40,13 +42,13 @@ class PayfastPayment extends StatelessWidget {
             }
             if (snapshot.hasData) {
               return const Center(
-                child: Text('Loding failed.'),
+                child: Text('Loading failed.'),
               );
             }
             if (snapshot.hasError) {
               print(snapshot.error);
               return const Center(
-                child: Text('Loding failed.'),
+                child: Text('Loading failed.'),
               );
             }
             return WebView(
@@ -92,7 +94,7 @@ class PayfastPayment extends StatelessWidget {
 
     // final merchantKey = '77jcu5v4ufdod';
 
-    this.url =
+    url =
         'https://sandbox.payfast.co.za/eng/process?merchant_id=$merchantId&merchant_key=$merchantKey&amount=$amount&item_name=GrenmartGroceries';
     //   return;
     // }

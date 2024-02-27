@@ -2,8 +2,10 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:no_name_ecommerce/services/payment_services/payment_gateway_list_service.dart';
 import 'package:no_name_ecommerce/services/place_order_service.dart';
 import 'package:no_name_ecommerce/view/utils/others_helper.dart';
@@ -32,6 +34,7 @@ class BillplzPayment extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: const Text('BillPlz'),
       ),
       body: FutureBuilder(
@@ -44,13 +47,13 @@ class BillplzPayment extends StatelessWidget {
             }
             if (snapshot.hasData) {
               return const Center(
-                child: Text('Loding failed.'),
+                child: Text('Loading failed.'),
               );
             }
             if (snapshot.hasError) {
               print(snapshot.error);
               return const Center(
-                child: Text('Loding failed.'),
+                child: Text('Loading failed.'),
               );
             }
             return WebView(
@@ -68,7 +71,25 @@ class BillplzPayment extends StatelessWidget {
               initialUrl: url,
               javascriptMode: JavascriptMode.unrestricted,
               onPageFinished: (value) async {
-                verifyPayment(value, context);
+                debugPrint(
+                    "$value.............................................."
+                        .toString());
+                // verifyPayment(value, context);
+              },
+              navigationDelegate: (navigation) {
+                if (navigation.url.contains("paid%5D=true") &&
+                    navigation.url.contains("http://www.xgenious.com")) {
+                  Provider.of<PlaceOrderService>(context, listen: false)
+                      .makePaymentSuccess(context);
+                  return NavigationDecision.prevent;
+                }
+                if (navigation.url.contains("paid%5D=false") &&
+                    navigation.url.contains("http://www.xgenious.com")) {
+                  showSnackBar(context, 'Payment failed', Colors.red);
+                  Navigator.pop(context);
+                  return NavigationDecision.prevent;
+                }
+                return NavigationDecision.navigate;
               },
             );
           }),
@@ -105,21 +126,23 @@ class BillplzPayment extends StatelessWidget {
       "Content-Type": "application/json",
       "Accept": "application/json",
       "Authorization": basicAuth,
-      // Above is API server key for the Midtrans account, encoded to base64
+      // Above is API server key for the Mid trans account, encoded to base64
     };
+    debugPrint(base64Encode(utf8.encode('$username:$username')).toString());
     final response = await http.post(url,
         headers: header,
         body: jsonEncode({
           "collection_id": collectionName,
-          "description": "Qixer payment",
+          "description": "Fixer payment",
           "email": email,
           "name": name,
           "amount": "${double.parse(amount) * 100}",
           "reference_1_label": "Bank Code",
           "reference_1": "BP-FKR01",
+          "redirect_url": "http://www.xgenious.com",
           "callback_url": "http://www.xgenious.com"
         }));
-    print(response.statusCode);
+    debugPrint(response.body.toString());
     if (response.statusCode == 200) {
       this.url = jsonDecode(response.body)["url"];
       return;
@@ -129,18 +152,18 @@ class BillplzPayment extends StatelessWidget {
   }
 }
 
-Future verifyPayment(String url, BuildContext context) async {
-  final uri = Uri.parse(url);
-  final response = await http.get(uri);
-  if (response.body.contains('paid')) {
-    Provider.of<PlaceOrderService>(context, listen: false)
-        .makePaymentSuccess(context);
+// Future verifyPayment(String url, BuildContext context) async {
+//   final uri = Uri.parse(url);
+//   final response = await http.get(uri);
+//   if (response.body.contains('paid')) {
+//     Provider.of<PlaceOrderService>(context, listen: false)
+//         .makePaymentSuccess(context);
 
-    return;
-  }
-  if (response.body.contains('your payment was not')) {
-    showSnackBar(context, 'Payment failed', Colors.red);
-    Navigator.pop(context);
-    return;
-  }
-}
+//     return;
+//   }
+//   if (response.body.contains('your payment was not')) {
+//     showSnackBar(context, 'Payment failed', Colors.red);
+//     Navigator.pop(context);
+//     return;
+//   }
+// }

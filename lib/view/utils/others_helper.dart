@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:no_name_ecommerce/view/utils/constant_colors.dart';
+import 'package:no_name_ecommerce/view/utils/responsive.dart';
 
 //===========================>
 
@@ -15,7 +16,7 @@ showLoading(Color? color) {
 void showToast(String msg, Color? color) {
   Fluttertoast.cancel();
   Fluttertoast.showToast(
-      msg: msg,
+      msg: tsProvider == null ? msg : tsProvider!.getString(msg),
       toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,

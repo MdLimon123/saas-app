@@ -18,6 +18,7 @@ class AddtocartModel {
   var childCategory;
   var attributes;
   var variantId;
+  var taxOSR;
 
   cartMap() {
     var mapping = Map<String, dynamic>();
@@ -35,6 +36,7 @@ class AddtocartModel {
     mapping['childCategory'] = childCategory;
     mapping['attributes'] = jsonEncode(attributes);
     mapping['variantId'] = variantId;
+    mapping['tax_options_sum_rate'] = taxOSR;
     return mapping;
   }
 }

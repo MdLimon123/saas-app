@@ -11,6 +11,7 @@ import 'package:no_name_ecommerce/view/utils/constant_colors.dart';
 import 'package:no_name_ecommerce/view/utils/constant_styles.dart';
 import 'package:provider/provider.dart';
 
+import '../../services/product_db_service.dart';
 import '../home/landing_page.dart';
 
 class OrderSuccessPage extends StatelessWidget {
@@ -20,6 +21,7 @@ class OrderSuccessPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var orderId =
         Provider.of<PlaceOrderService>(context, listen: false).orderId;
+    ProductDbService().emptyCartTable();
 
     return Scaffold(
       backgroundColor: Colors.white,

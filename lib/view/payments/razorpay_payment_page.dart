@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print, prefer_typing_uninitialized_variables
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:no_name_ecommerce/services/payment_services/payment_gateway_list_service.dart';
 import 'package:no_name_ecommerce/services/place_order_service.dart';
 import 'package:no_name_ecommerce/view/utils/constant_styles.dart';
@@ -111,6 +112,7 @@ class _RazorpayPaymentPageState extends State<RazorpayPaymentPage> {
 
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: const Text("Razorpay"),
       ),
       body: SizedBox(

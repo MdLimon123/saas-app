@@ -1,9 +1,13 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:no_name_ecommerce/services/common_service.dart';
 import 'package:no_name_ecommerce/view/utils/api_url.dart';
+import 'package:no_name_ecommerce/view/utils/const_strings.dart';
+import 'package:no_name_ecommerce/view/utils/responsive.dart';
 import 'package:no_name_ecommerce/view/utils/translate_strings.dart';
+import 'package:provider/provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -23,7 +27,7 @@ class TranslateStringService with ChangeNotifier {
     notifyListeners();
   }
 
-  fetchTranslatedStrings(BuildContext context) async {
+  Future fetchTranslatedStrings(BuildContext context) async {
     if (tStrings != null) {
       //if already loaded. no need to load again
       return;
@@ -49,8 +53,13 @@ class TranslateStringService with ChangeNotifier {
 
       var response = await http.post(Uri.parse(ApiUrl.translateUri),
           headers: header, body: data);
+      debugPrint(response.body.toString());
       if (response.statusCode == 200) {
         tStrings = jsonDecode(response.body)['strings'];
+        debugPrint(getString(ConstString.refundProducts).toString());
+        debugPrint(getString(ConstString.refundProducts).toString());
+        debugPrint(getString(ConstString.refundProducts).toString());
+        debugPrint(getString(ConstString.refundProducts).toString());
         notifyListeners();
       } else {
         //something went wrong

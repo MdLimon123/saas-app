@@ -40,8 +40,8 @@ class OrderedProducts extends StatelessWidget {
                       ': ${os.detailsProductList[i]['qty']}'),
                   gapH(6),
                   SizedBox(
-                    width: 70,
-                    child: buttonPrimary(ConstString.refund, () {
+                    width: 150,
+                    child: buttonPrimary(ConstString.requestRefund, () {
                       OrderHelper().refundPopup(context,
                           orderId: orderId,
                           productId: os.detailsProductList[i]['id']);

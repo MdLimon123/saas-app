@@ -47,19 +47,20 @@ class UserDetails {
     this.userCountry,
     this.userState,
     this.deliveryAddress,
+    this.postalCode,
   });
 
-  int? id;
+  dynamic id;
   String? name;
   String? email;
-  dynamic? emailVerifiedAt;
+  dynamic emailVerifiedAt;
   String? username;
   int? emailVerified;
   String? emailVerifyToken;
+  String? postalCode;
   String? mobile;
   String? company;
   String? address;
-  String? city;
   String? state;
   String? image;
   String? country;
@@ -68,6 +69,7 @@ class UserDetails {
   String? profileImageUrl;
   User? userCountry;
   User? userState;
+  User? city;
   DeliveryAddress? deliveryAddress;
 
   factory UserDetails.fromJson(Map<String, dynamic>? json) => UserDetails(
@@ -81,15 +83,18 @@ class UserDetails {
         mobile: json?["mobile"],
         company: json?["company"],
         address: json?["address"],
-        city: json?["city"],
         state: json?["state"],
         image: json?["image"],
         country: json?["country"],
+        postalCode: json?["postal_code"],
         createdAt: DateTime.parse(json?["created_at"]),
         updatedAt: DateTime.parse(json?["updated_at"]),
         profileImageUrl: json?["profile_image_url"],
         userCountry: json?["user_country"] != null
             ? User.fromJson(json?["user_country"])
+            : null,
+        city: json?["user_city"] != null
+            ? User.fromJson(json?["user_city"])
             : null,
         userState: json?["user_state"] != null
             ? User.fromJson(json?["user_state"])
@@ -136,6 +141,7 @@ class DeliveryAddress {
     this.address,
     this.createdAt,
     this.updatedAt,
+    this.postCode,
   });
 
   int? id;
@@ -146,6 +152,7 @@ class DeliveryAddress {
   String? phone;
   String? email;
   String? city;
+  String? postCode;
   String? address;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -157,6 +164,7 @@ class DeliveryAddress {
         countryId: json["country_id"],
         stateId: json["state_id"],
         fullName: json["full_name"],
+        postCode: json["postal_code"]?.toString(),
         phone: json["phone"],
         email: json["email"],
         city: json["city"],
@@ -188,14 +196,16 @@ class User {
     this.createdAt,
     this.updatedAt,
     this.countryId,
+    this.stateId,
   });
 
-  int? id;
+  dynamic id;
   String? name;
-  String? status;
+  dynamic status;
   DateTime? createdAt;
   DateTime? updatedAt;
-  int? countryId;
+  dynamic countryId;
+  dynamic stateId;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         id: json["id"],
@@ -204,6 +214,7 @@ class User {
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         countryId: json["country_id"],
+        stateId: json["state_id"],
       );
 
   Map<String, dynamic> toJson() => {

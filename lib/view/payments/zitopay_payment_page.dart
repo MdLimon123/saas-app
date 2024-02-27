@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:no_name_ecommerce/services/place_order_service.dart';
 import 'package:no_name_ecommerce/view/utils/others_helper.dart';
 import 'package:provider/provider.dart';
@@ -48,6 +49,7 @@ class _ZitopayPaymentPageState extends State<ZitopayPaymentPage> {
         },
         child: Scaffold(
           appBar: AppBar(
+            systemOverlayStyle: SystemUiOverlayStyle.dark,
             backgroundColor: Colors.blue,
             title: const Text("Zitopay"),
           ),

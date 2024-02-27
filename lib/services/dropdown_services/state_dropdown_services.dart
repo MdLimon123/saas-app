@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:no_name_ecommerce/model/dropdown_models/states_dropdown_model.dart';
+import 'package:no_name_ecommerce/services/dropdown_services/city_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/dropdown_services/country_dropdown_service.dart';
 import 'package:no_name_ecommerce/services/profile_service.dart';
 import 'package:no_name_ecommerce/view/utils/api_url.dart';
@@ -15,7 +16,7 @@ class StateDropdownService with ChangeNotifier {
   var statesDropdownList = [];
   var statesDropdownIndexList = [];
 
-  dynamic selectedState = ConstString.selectCity;
+  dynamic selectedState = ConstString.selectState;
   dynamic selectedStateId = defaultId;
 
   bool isLoading = false;
@@ -37,7 +38,7 @@ class StateDropdownService with ChangeNotifier {
   setStateDefault() {
     statesDropdownList = [];
     statesDropdownIndexList = [];
-    selectedState = ConstString.selectCity;
+    selectedState = ConstString.selectState;
     selectedStateId = defaultId;
 
     currentPage = 1;
@@ -51,7 +52,7 @@ class StateDropdownService with ChangeNotifier {
   }
 
   setSelectedStatesId(value) {
-    selectedStateId = value;
+    selectedStateId = value ?? defaultId;
     print('selected state id $value');
     notifyListeners();
   }
@@ -120,10 +121,8 @@ class StateDropdownService with ChangeNotifier {
         Provider.of<ProfileService>(context, listen: false).profileDetails;
 
     selectedState =
-        profileProvider?.userDetails.state ?? ConstString.selectCity;
-    selectedStateId = profileProvider?.userDetails.userState != null
-        ? profileProvider?.userDetails.userState?.id
-        : defaultId;
+        profileProvider?.userDetails.userState?.name ?? ConstString.selectState;
+    selectedStateId = profileProvider?.userDetails.userState?.id ?? defaultId;
     print(statesDropdownList);
     print(statesDropdownIndexList);
     print('selected state $selectedState');
@@ -137,7 +136,7 @@ class StateDropdownService with ChangeNotifier {
   set_State(BuildContext context, {StatesDropdownModel? data}) {
     var profileData =
         Provider.of<ProfileService>(context, listen: false).profileDetails;
-
+    Provider.of<CityDropdownService>(context, listen: false).setCityDefault();
     if (profileData != null) {
       var userCountryId = Provider.of<ProfileService>(context, listen: false)
               .profileDetails

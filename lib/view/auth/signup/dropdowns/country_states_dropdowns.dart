@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:no_name_ecommerce/view/auth/signup/dropdowns/city_dropdown.dart';
 import 'package:no_name_ecommerce/view/auth/signup/dropdowns/country_dropdown.dart';
 import 'package:no_name_ecommerce/view/auth/signup/dropdowns/state_dropdown.dart';
 import 'package:no_name_ecommerce/view/utils/common_helper.dart';
 import 'package:no_name_ecommerce/view/utils/const_strings.dart';
 import 'package:no_name_ecommerce/view/utils/constant_colors.dart';
+import 'package:no_name_ecommerce/view/utils/responsive.dart';
 
 class CountryStatesDropdowns extends StatefulWidget {
   const CountryStatesDropdowns({Key? key, this.isFromDeliveryPage = false})
@@ -55,6 +57,19 @@ class _CountryStatesDropdownsState extends State<CountryStatesDropdowns> {
             ),
           ],
         ),
+        const SizedBox(
+          height: 25,
+        ),
+        // city dropdown ===============>
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            labelCommon(ConstString.chooseStates),
+            CityDropdown(
+              isFromDeliveryPage: widget.isFromDeliveryPage,
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -70,7 +85,7 @@ dropdownPlaceholder({required String hintText}) {
         ),
         borderRadius: BorderRadius.circular(50)),
     child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      paragraphCommon(hintText),
+      paragraphCommon(tsProvider?.getString(hintText) ?? hintText),
       const Icon(Icons.keyboard_arrow_down)
     ]),
   );

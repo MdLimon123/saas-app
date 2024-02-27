@@ -13,6 +13,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../dropdown_services/city_dropdown_services.dart';
+
 class AddRemoveShippingAddressService with ChangeNotifier {
   bool isloading = false;
 
@@ -32,7 +34,7 @@ class AddRemoveShippingAddressService with ChangeNotifier {
       required email,
       required phone,
       required address,
-      required city,
+      // required city,
       required zip}) async {
     var ln = Provider.of<TranslateStringService>(context, listen: false);
 
@@ -44,6 +46,8 @@ class AddRemoveShippingAddressService with ChangeNotifier {
 
     var stateId = Provider.of<StateDropdownService>(context, listen: false)
         .selectedStateId;
+    var cityId =
+        Provider.of<CityDropdownService>(context, listen: false).selectedCityId;
 
     if (stateId == defaultId) {
       showToast(ln.getString(ConstString.youMustSelectAstate), Colors.black);
@@ -53,17 +57,26 @@ class AddRemoveShippingAddressService with ChangeNotifier {
       showToast(ln.getString(ConstString.youMustSelectAcountry), Colors.black);
       return;
     }
+    // if (cityId == defaultId) {
+    //   showToast(ln.getString(ConstString.youMustSelectACity), Colors.black);
+    //   return;
+    // }
+    final userId = Provider.of<ProfileService>(context, listen: false)
+        .profileDetails
+        ?.userDetails
+        .id;
 
     var data = jsonEncode({
       'full_name': name,
       'email': email,
       'phone': phone,
       'state_id': stateId,
-      'city': city,
-      'zip_code': zip,
+      'city_id': cityId,
+      'postal_code': zip,
       'country_id': countryId,
       'address': address,
-      'shipping_address_name': shippingName
+      'shipping_address_name': shippingName,
+      'user_id': userId.toString()
     });
     var header = {
       //if header type is application/json then the data should be in jsonEncode method
@@ -80,6 +93,8 @@ class AddRemoveShippingAddressService with ChangeNotifier {
     setLoadingFalse();
 
     if (response.statusCode == 200) {
+      debugPrint(response.body.toString());
+      debugPrint(data.toString());
       showToast(ln.getString(ConstString.addressSaved), Colors.black);
 
       Provider.of<ShippingListService>(context, listen: false)

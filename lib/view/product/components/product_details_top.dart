@@ -88,6 +88,7 @@ class _ProductDetailsTopState extends State<ProductDetailsTop> {
                               thumbnail:
                                   provider.productDetails?.product?.image ??
                                       placeHolderUrl,
+                              taxOSR: provider.productDetails?.product?.taxOSR,
                               discountPrice:
                                   provider.productDetails?.product?.salePrice,
                               oldPrice: provider.productDetails?.product?.price,

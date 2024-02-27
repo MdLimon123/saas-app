@@ -24,7 +24,9 @@ class _ProductDetailsSliderState extends State<ProductDetailsSlider> {
             provider.productDetails?.product?.galleryImages.length ?? 0;
         var galleryImages = provider.productDetails?.product?.galleryImages;
 
-        var slideCountLength = galleryLength == 0 ? 1 : galleryLength;
+        var slideCountLength = provider.additionalInfoImage == null
+            ? (galleryLength == 0 ? 1 : galleryLength)
+            : 0;
         var image = provider.productDetails?.product?.image ?? placeHolderUrl;
         return Column(
           children: [
@@ -41,11 +43,14 @@ class _ProductDetailsSliderState extends State<ProductDetailsSlider> {
                             _selectedSlide = value;
                           });
                         },
-                        itemCount: galleryLength == 0 ? 1 : galleryLength,
+                        itemCount: provider.additionalInfoImage == null
+                            ? (galleryLength == 0 ? 1 : galleryLength)
+                            : 1,
                         itemBuilder: (context, i) {
                           return CachedNetworkImage(
-                            imageUrl:
-                                '${galleryLength == 0 ? image : provider.productDetails?.product?.galleryImages[i].image}',
+                            imageUrl: provider.additionalInfoImage == null
+                                ? '${galleryLength == 0 ? image : provider.productDetails?.product?.galleryImages[i].image}'
+                                : provider.additionalInfoImage.toString(),
                             errorWidget: (context, url, error) =>
                                 const Icon(Icons.error),
                             placeholder: (context, url) => Icon(

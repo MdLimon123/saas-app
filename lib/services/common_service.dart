@@ -17,6 +17,7 @@ import 'package:no_name_ecommerce/services/translate_string_service.dart';
 import 'package:no_name_ecommerce/view/product/product_details_page.dart';
 import 'package:no_name_ecommerce/view/utils/const_strings.dart';
 import 'package:no_name_ecommerce/view/utils/others_helper.dart';
+import 'package:no_name_ecommerce/view/utils/responsive.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -70,7 +71,10 @@ runAtHomeScreen(BuildContext context) {
 
 runAtStart(BuildContext context) {
   Provider.of<TranslateStringService>(context, listen: false)
-      .fetchTranslatedStrings(context);
+      .fetchTranslatedStrings(context)
+      .then((f) {
+    tsProvider = Provider.of<TranslateStringService>(context, listen: false);
+  });
   Provider.of<RtlService>(context, listen: false)
       .fetchCurrencyAndDirection(context);
 
@@ -112,8 +116,8 @@ showWithCurrency(BuildContext context, data) {
   String currency = Provider.of<RtlService>(context, listen: false).currency;
 
   if (currencyAtLeft) {
-    return "$currency$data";
+    return "$currency${data is String ? data : data?.toStringAsFixed(2) ?? 00.00}";
   } else {
-    return "$data$currency";
+    return "${data is String ? data : data?.toStringAsFixed(2) ?? 00.00}$currency";
   }
 }

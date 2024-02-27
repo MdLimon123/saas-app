@@ -18,11 +18,18 @@ class FeaturedProductService with ChangeNotifier {
     var connection = await checkConnection(context);
     if (!connection) return;
 
-    var response = await http.get(Uri.parse(ApiUrl.featuredProductsUri));
-
-    if (response.statusCode == 200) {
-      var data = FeaturedProductsModel.fromJson(jsonDecode(response.body));
-      featuredProducts = data;
+    try {
+      var response = await http.get(Uri.parse(ApiUrl.featuredProductsUri));
+      debugPrint(response.body.toString());
+      if (response.statusCode == 200) {
+        var data = FeaturedProductsModel.fromJson(jsonDecode(response.body));
+        featuredProducts = data;
+      }
+    } catch (e) {
+      featuredProducts ??= FeaturedProductsModel(
+          data: [], links: Links(), meta: Meta(links: [Link()]));
+      debugPrint(e.toString());
+    } finally {
       notifyListeners();
     }
   }

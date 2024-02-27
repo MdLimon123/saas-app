@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:no_name_ecommerce/services/place_order_service.dart';
 import 'package:no_name_ecommerce/view/utils/others_helper.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +10,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:http/http.dart' as http;
 
 class PaytmPayment extends StatefulWidget {
-  PaytmPayment({Key? key}) : super(key: key);
+  const PaytmPayment({Key? key}) : super(key: key);
 
   @override
   State<PaytmPayment> createState() => _PaytmPaymentState();
@@ -34,7 +35,9 @@ class _PaytmPaymentState extends State<PaytmPayment> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Paytm')),
+      appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+          title: const Text('Paytm')),
       body: WebView(
         onWebViewCreated: (controller) {
           _controller = controller;

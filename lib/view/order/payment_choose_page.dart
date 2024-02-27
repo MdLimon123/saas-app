@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterzilla_fixed_grid/flutterzilla_fixed_grid.dart';
@@ -16,6 +14,7 @@ import 'package:no_name_ecommerce/view/utils/common_helper.dart';
 import 'package:no_name_ecommerce/view/utils/const_strings.dart';
 import 'package:no_name_ecommerce/view/utils/constant_colors.dart';
 import 'package:no_name_ecommerce/view/utils/constant_styles.dart';
+import 'package:no_name_ecommerce/view/utils/custom_input.dart';
 import 'package:no_name_ecommerce/view/utils/others_helper.dart';
 import 'package:provider/provider.dart';
 
@@ -32,8 +31,10 @@ class _PaymentChoosePageState extends State<PaymentChoosePage> {
     super.initState();
   }
 
+  bool cashOnDelivery = false;
   int selectedMethod = -1;
   bool termsAgree = false;
+  TextEditingController tiController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     //fetch payment gateway list
@@ -71,7 +72,8 @@ class _PaymentChoosePageState extends State<PaymentChoosePage> {
                       EdgeInsets.symmetric(horizontal: screenPadHorizontal),
                   child: Consumer<PaymentGatewayListService>(
                     builder: (context, pgProvider, child) => pgProvider
-                            .paymentList.isNotEmpty
+                                .paymentList.isNotEmpty ||
+                            pgProvider.cashOnD
                         ? Consumer<PlaceOrderService>(
                             builder: (context, provider, child) => Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,155 +109,184 @@ class _PaymentChoosePageState extends State<PaymentChoosePage> {
 
                                   titleCommon(ln
                                       .getString(ConstString.choosePayMethod)),
+                                  if (!cashOnDelivery)
+                                    //payment method card
+                                    GridView.builder(
+                                      gridDelegate:
+                                          const FlutterzillaFixedGridView(
+                                              crossAxisCount: 3,
+                                              mainAxisSpacing: 15,
+                                              crossAxisSpacing: 15,
+                                              height: 60),
+                                      padding: const EdgeInsets.only(top: 30),
+                                      itemCount: pgProvider.paymentList.length,
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      clipBehavior: Clip.none,
+                                      itemBuilder: (context, index) {
+                                        return InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              selectedMethod = index;
+                                            });
 
-                                  //payment method card
-                                  GridView.builder(
-                                    gridDelegate:
-                                        const FlutterzillaFixedGridView(
-                                            crossAxisCount: 3,
-                                            mainAxisSpacing: 15,
-                                            crossAxisSpacing: 15,
-                                            height: 60),
-                                    padding: const EdgeInsets.only(top: 30),
-                                    itemCount: pgProvider.paymentList.length,
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    clipBehavior: Clip.none,
-                                    itemBuilder: (context, index) {
-                                      return InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            selectedMethod = index;
-                                          });
+                                            pgProvider.setSelectedMethodName(
+                                                pgProvider.paymentList[
+                                                    selectedMethod]['name']);
 
-                                          pgProvider.setSelectedMethodName(
-                                              pgProvider.paymentList[
-                                                  selectedMethod]['name']);
-
-                                          //set key
-                                          pgProvider.setKey(
-                                              pgProvider.paymentList[
-                                                  selectedMethod]['name'],
-                                              index);
-                                        },
-                                        child: Stack(
-                                          clipBehavior: Clip.none,
-                                          children: [
-                                            Container(
-                                              width: double.infinity,
-                                              height: 60,
-                                              padding: const EdgeInsets.all(10),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                    color:
-                                                        selectedMethod == index
-                                                            ? primaryColor
-                                                            : borderColor),
+                                            //set key
+                                            pgProvider.setKey(
+                                                pgProvider.paymentList[
+                                                    selectedMethod]['name'],
+                                                index);
+                                          },
+                                          child: Stack(
+                                            clipBehavior: Clip.none,
+                                            children: [
+                                              Container(
+                                                width: double.infinity,
+                                                height: 60,
+                                                padding:
+                                                    const EdgeInsets.all(10),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  border: Border.all(
+                                                      color: selectedMethod ==
+                                                              index
+                                                          ? primaryColor
+                                                          : borderColor),
+                                                ),
+                                                child: CachedNetworkImage(
+                                                  imageUrl: pgProvider
+                                                          .paymentList[index]
+                                                      ['image'],
+                                                  placeholder: (context, url) {
+                                                    return Image.asset(
+                                                        'assets/images/placeholder.png');
+                                                  },
+                                                  // fit: BoxFit.fitWidth,
+                                                ),
                                               ),
-                                              child: CachedNetworkImage(
-                                                imageUrl: pgProvider
-                                                        .paymentList[index]
-                                                    ['image'],
-                                                placeholder: (context, url) {
-                                                  return Image.asset(
-                                                      'assets/images/placeholder.png');
-                                                },
-                                                // fit: BoxFit.fitWidth,
-                                              ),
-                                            ),
-                                            selectedMethod == index
-                                                ? Positioned(
-                                                    right: -7,
-                                                    top: -9,
-                                                    child: checkCircle())
-                                                : Container()
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
+                                              selectedMethod == index
+                                                  ? Positioned(
+                                                      right: -7,
+                                                      top: -9,
+                                                      child: checkCircle())
+                                                  : Container()
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
 
-                                  if (selectedMethod > 0)
+                                  if (selectedMethod != -1)
                                     pgProvider.paymentList[selectedMethod]
                                                 ['name'] ==
                                             'manual_payment'
                                         ?
                                         //pick image ==========>
                                         Consumer<BankTransferService>(
-                                            builder:
-                                                (context, btProvider, child) =>
-                                                    Column(
-                                                      children: [
-                                                        //pick image button =====>
-                                                        Column(
-                                                          children: [
-                                                            const SizedBox(
-                                                              height: 30,
-                                                            ),
-                                                            buttonPrimary(
-                                                                ln.getString(
-                                                                    ConstString
-                                                                        .chooseImages),
-                                                                () {
-                                                              btProvider
-                                                                  .pickImage(
-                                                                      context);
-                                                            }),
-                                                          ],
-                                                        ),
-                                                        btProvider.pickedImage !=
-                                                                null
-                                                            ? Column(
-                                                                children: [
-                                                                  const SizedBox(
-                                                                    height: 30,
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 80,
-                                                                    child:
-                                                                        ListView(
-                                                                      clipBehavior:
-                                                                          Clip.none,
-                                                                      scrollDirection:
-                                                                          Axis.horizontal,
-                                                                      shrinkWrap:
-                                                                          true,
-                                                                      children: [
-                                                                        InkWell(
-                                                                          onTap:
-                                                                              () {},
-                                                                          child:
-                                                                              Column(
-                                                                            children: [
-                                                                              Container(
-                                                                                margin: const EdgeInsets.only(right: 10),
-                                                                                child: Image.file(
-                                                                                  File(btProvider.pickedImage.path),
-                                                                                  height: 80,
-                                                                                  width: 80,
-                                                                                  fit: BoxFit.cover,
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              )
-                                                            : Container(),
-                                                      ],
-                                                    ))
+                                            builder: (context, btProvider,
+                                                    child) =>
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    //pick image button =====>
+
+                                                    const SizedBox(height: 30),
+                                                    labelCommon(
+                                                        "Transaction Id"),
+                                                    paragraphCommon(
+                                                        "CCP: 002487517 / RIP: 15415121541",
+                                                        color:
+                                                            Colors.blueAccent),
+                                                    gapH(8),
+                                                    CustomInput(
+                                                        controller:
+                                                            tiController,
+                                                        hintText:
+                                                            "Enter transaction id"),
+
+                                                    // btProvider.pickedImage !=
+                                                    //         null
+                                                    //     ? Column(
+                                                    //         children: [
+                                                    //           const SizedBox(
+                                                    //             height: 30,
+                                                    //           ),
+                                                    //           SizedBox(
+                                                    //             height: 80,
+                                                    //             child:
+                                                    //                 ListView(
+                                                    //               clipBehavior:
+                                                    //                   Clip.none,
+                                                    //               scrollDirection:
+                                                    //                   Axis.horizontal,
+                                                    //               shrinkWrap:
+                                                    //                   true,
+                                                    //               children: [
+                                                    //                 InkWell(
+                                                    //                   onTap:
+                                                    //                       () {},
+                                                    //                   child:
+                                                    //                       Column(
+                                                    //                     children: [
+                                                    //                       Container(
+                                                    //                         margin: const EdgeInsets.only(right: 10),
+                                                    //                         child: Image.file(
+                                                    //                           File(btProvider.pickedImage.path),
+                                                    //                           height: 80,
+                                                    //                           width: 80,
+                                                    //                           fit: BoxFit.cover,
+                                                    //                         ),
+                                                    //                       ),
+                                                    //                     ],
+                                                    //                   ),
+                                                    //                 ),
+                                                    //               ],
+                                                    //             ),
+                                                    //           ),
+                                                    //         ],
+                                                    //       )
+                                                    //     : Container(),
+                                                  ],
+                                                ))
                                         : Container(),
 
                                   //Agreement checkbox ===========>
                                   const SizedBox(
                                     height: 20,
                                   ),
+                                  if (pgProvider.cashOnD)
+                                    SizedBox(
+                                      // width: 55,
+                                      child: CheckboxListTile(
+                                        checkColor: Colors.white,
+                                        activeColor: primaryColor,
+                                        contentPadding: const EdgeInsets.all(0),
+                                        value: cashOnDelivery,
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            cashOnDelivery = !cashOnDelivery;
+                                            selectedMethod = -1;
+                                          });
+                                          if (cashOnDelivery) {
+                                            pgProvider.setSelectedMethodName(
+                                                "cash_on_delivery");
+                                          }
+                                        },
+                                        controlAffinity:
+                                            ListTileControlAffinity.leading,
+                                        title: paragraphCommon(
+                                            ln.getString(
+                                                ConstString.cashOnDelivery),
+                                            textAlign: TextAlign.start),
+                                      ),
+                                    ),
+                                  if (pgProvider.cashOnD) gapH(8),
                                   Row(
                                     children: [
                                       SizedBox(
@@ -290,7 +321,7 @@ class _PaymentChoosePageState extends State<PaymentChoosePage> {
                                                           const TermsConditionPage()));
                                             },
                                             child: paragraphCommon(
-                                                '(Click to see)',
+                                                '(${ln.getString(ConstString.clickToSee)})',
                                                 fontweight: FontWeight.w600,
                                                 color: Colors.blue),
                                           )
@@ -313,9 +344,10 @@ class _PaymentChoosePageState extends State<PaymentChoosePage> {
 
                                       return;
                                     }
-                                    if (selectedMethod < 0) {
+                                    if (!cashOnDelivery && selectedMethod < 0) {
                                       showToast(
-                                          'You must select a payment method',
+                                          ConstString
+                                              .youMustSelectAPaymentMethod,
                                           Colors.black);
                                       return;
                                     }
@@ -324,18 +356,14 @@ class _PaymentChoosePageState extends State<PaymentChoosePage> {
                                     }
 
                                     payAction(
-                                        pgProvider.paymentList[selectedMethod]
-                                            ['name'],
+                                        cashOnDelivery
+                                            ? "cash_on_delivery"
+                                            : pgProvider
+                                                    .paymentList[selectedMethod]
+                                                ['name'],
                                         context,
                                         //if user selected bank transfer
-                                        pgProvider.paymentList[selectedMethod]
-                                                    ['name'] ==
-                                                'manual_payment'
-                                            ? Provider.of<BankTransferService>(
-                                                    context,
-                                                    listen: false)
-                                                .pickedImage
-                                            : null);
+                                        tiController.text);
                                   },
                                       isloading: provider.isloading == false
                                           ? false

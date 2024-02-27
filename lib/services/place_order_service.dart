@@ -8,6 +8,7 @@ import 'package:no_name_ecommerce/services/cart_services/coupon_service.dart';
 import 'package:no_name_ecommerce/services/cart_services/delivery_address_service.dart';
 import 'package:no_name_ecommerce/services/checkout_service.dart';
 import 'package:no_name_ecommerce/services/common_service.dart';
+import 'package:no_name_ecommerce/services/dropdown_services/city_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/dropdown_services/country_dropdown_service.dart';
 import 'package:no_name_ecommerce/services/dropdown_services/state_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/payment_services/payment_gateway_list_service.dart';
@@ -43,7 +44,7 @@ class PlaceOrderService with ChangeNotifier {
   }
 
   Future<bool> placeOrder(BuildContext context, String? imagePath,
-      {bool isManualOrCod = false}) async {
+      {bool isManualOrCod = false, transactionId = ''}) async {
     setLoadingTrue();
 
     var ln = Provider.of<TranslateStringService>(context, listen: false);
@@ -67,6 +68,8 @@ class PlaceOrderService with ChangeNotifier {
         .selectedCountryId;
     var stateId = Provider.of<StateDropdownService>(context, listen: false)
         .selectedStateId;
+    var cityId =
+        Provider.of<CityDropdownService>(context, listen: false).selectedCityId;
 
     var cartItems = await CheckoutService().formatCart(context);
 
@@ -89,21 +92,42 @@ class PlaceOrderService with ChangeNotifier {
       'country': countryId,
       'state': stateId,
       'address': address['address'],
-      'city': address['city'],
+      'city': cityId.toString(),
       'shipping_method': selectedShipId,
       'used_coupon': coupon ?? '',
       'message': '',
       'payment_gateway': selectedPaymentMethodName,
+      'manual_trasaction_id': transactionId,
       // 'bank_payment_input': imagePath !=null ? await MultipartFile.fromFile(imagePath,
       //     filename: '${address['name']}$imagePath.jpg') : null,
 
       'cart': jsonEncode(cartItems)
     });
+    debugPrint({
+      'name': address['name'],
+      'email': address['email'],
+      'phone': address['phone'],
+      'country': countryId,
+      'state': stateId,
+      'address': address['address'],
+      'city': address['city'],
+      'shipping_method': selectedShipId,
+      'used_coupon': coupon ?? '',
+      'message': '',
+      'payment_gateway': selectedPaymentMethodName,
+      'manual_trasaction_id': transactionId,
+      // 'bank_payment_input': imagePath !=null ? await MultipartFile.fromFile(imagePath,
+      //     filename: '${address['name']}$imagePath.jpg') : null,
 
-    var response = await dio.post(
-      ApiUrl.checkoutUri,
-      data: formData,
-    );
+      'cart': jsonEncode(cartItems)
+    }.toString());
+
+    var response =
+        await dio.post(ApiUrl.checkoutUri, data: formData, options: Options(
+      validateStatus: (status) {
+        return true;
+      },
+    ));
 
     print(response.data);
 

@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:no_name_ecommerce/view/utils/api_url.dart';
@@ -38,11 +38,11 @@ class GoogleSignInService with ChangeNotifier {
     if (googleUser == null) return;
     _user = googleUser;
 
-    final googleAuth = await googleUser.authentication;
-    final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
+    // final googleAuth = await googleUser.authentication;
+    // final credential = GoogleAuthProvider.credential(
+    //     accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
-    await FirebaseAuth.instance.signInWithCredential(credential);
+    // await FirebaseAuth.instance.signInWithCredential(credential);
 
     // try to login with the info
     if (_user != null) {
@@ -96,7 +96,7 @@ class GoogleSignInService with ChangeNotifier {
         Navigator.pushReplacement<void, void>(
           context,
           MaterialPageRoute<void>(
-            builder: (BuildContext context) => LandingPage(),
+            builder: (BuildContext context) => const LandingPage(),
           ),
         );
         print(response.body);

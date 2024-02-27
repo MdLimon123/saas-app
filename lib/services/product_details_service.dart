@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -52,6 +54,7 @@ class ProductDetailsService with ChangeNotifier {
     // reviewing = false;
     productSalePrice = 0;
     productDetails = null;
+    qty = 1;
     // descriptionExpand = false;
     // aDescriptionExpand = false;
     // reviewExpand = false;
@@ -113,6 +116,7 @@ class ProductDetailsService with ChangeNotifier {
     // print(selectedInventorySetIndex);
 
     bool setMatched = true;
+    debugPrint(selectedInventorySetIndex.toString());
     for (int i = 0; i < selectedInventorySetIndex.length; i++) {
       setMatched = true;
       Map sfsdf = {};
@@ -126,13 +130,14 @@ class ProductDetailsService with ChangeNotifier {
         // confirmingSelectedDeta.add(selectedInventorySet['Color_name']);
         if (!confirmingSelectedDeta.contains(e)) {
           setMatched = false;
+          continue;
         }
       }
       final mapData = {};
 
       if (setMatched) {
         print('Inventory..............');
-        selectedIndex = i;
+        selectedIndex = int.parse(selectedInventorySetIndex[i]);
         print(productDetails!
             .productInventorySet[int.parse(selectedInventorySetIndex[i])]);
         selectedInventorySetIndex = [selectedInventorySetIndex[i]];
@@ -165,6 +170,7 @@ class ProductDetailsService with ChangeNotifier {
       cartAble = true;
       selectedInventorySet.remove('hash');
       // print(selectedInventorySet);
+      debugPrint(selectedInventoryHash.toString());
       print(variantId);
       notifyListeners();
       return;

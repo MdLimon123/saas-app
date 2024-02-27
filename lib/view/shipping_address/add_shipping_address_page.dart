@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:no_name_ecommerce/services/common_service.dart';
+import 'package:no_name_ecommerce/services/dropdown_services/city_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/dropdown_services/country_dropdown_service.dart';
 import 'package:no_name_ecommerce/services/dropdown_services/state_dropdown_services.dart';
 import 'package:no_name_ecommerce/services/profile_edit_service.dart';
@@ -28,7 +29,6 @@ class _AddShippingAddressPageState extends State<AddShippingAddressPage> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController zipCodeController = TextEditingController();
   TextEditingController addressController = TextEditingController();
-  TextEditingController cityController = TextEditingController();
 
   // String? countryCode;
 
@@ -67,10 +67,10 @@ class _AddShippingAddressPageState extends State<AddShippingAddressPage> {
             ?.userDetails
             .address ??
         '';
-    cityController.text = Provider.of<ProfileService>(context, listen: false)
+    zipCodeController.text = Provider.of<ProfileService>(context, listen: false)
             .profileDetails
             ?.userDetails
-            .city ??
+            .postalCode ??
         '';
   }
 
@@ -104,22 +104,22 @@ class _AddShippingAddressPageState extends State<AddShippingAddressPage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           //Name ============>
-                          labelCommon(ConstString.shippingName),
+                          // labelCommon(ConstString.shippingName),
 
-                          CustomInput(
-                            controller: shippingNameController,
-                            validation: (value) {
-                              if (value == null || value.isEmpty) {
-                                return ln.getString(
-                                    ConstString.plzEnterShippingName);
-                              }
-                              return null;
-                            },
-                            hintText:
-                                ln.getString(ConstString.enterShippingName),
-                            paddingHorizontal: 20,
-                            textInputAction: TextInputAction.next,
-                          ),
+                          // CustomInput(
+                          //   controller: shippingNameController,
+                          //   validation: (value) {
+                          //     if (value == null || value.isEmpty) {
+                          //       return ln.getString(
+                          //           ConstString.plzEnterShippingName);
+                          //     }
+                          //     return null;
+                          //   },
+                          //   hintText:
+                          //       ln.getString(ConstString.enterShippingName),
+                          //   paddingHorizontal: 20,
+                          //   textInputAction: TextInputAction.next,
+                          // ),
 
                           //Name ============>
                           labelCommon(ConstString.fullName),
@@ -170,20 +170,20 @@ class _AddShippingAddressPageState extends State<AddShippingAddressPage> {
                           ),
 
                           //City
-                          labelCommon(ConstString.city),
-                          CustomInput(
-                            controller: cityController,
-                            validation: (value) {
-                              if (value == null || value.isEmpty) {
-                                return ln
-                                    .getString(ConstString.plzEnterYourCity);
-                              }
-                              return null;
-                            },
-                            hintText: ln.getString(ConstString.enterYourCity),
-                            paddingHorizontal: 20,
-                            textInputAction: TextInputAction.next,
-                          ),
+                          // labelCommon(ConstString.city),
+                          // CustomInput(
+                          //   controller: cityController,
+                          //   validation: (value) {
+                          //     if (value == null || value.isEmpty) {
+                          //       return ln
+                          //           .getString(ConstString.plzEnterYourCity);
+                          //     }
+                          //     return null;
+                          //   },
+                          //   hintText: ln.getString(ConstString.enterYourCity),
+                          //   paddingHorizontal: 20,
+                          //   textInputAction: TextInputAction.next,
+                          // ),
 
                           const CountryStatesDropdowns(),
 
@@ -238,20 +238,23 @@ class _AddShippingAddressPageState extends State<AddShippingAddressPage> {
                                     stateProvider.selectedStateId ==
                                         defaultId) {
                                   showToast(
-                                      'You must select a country and state',
+                                      ln.getString(
+                                          ConstString.mustSelectCountryState),
                                       Colors.black);
                                   return;
                                 }
 
-                                await provider.addAddress(context,
-                                    shippingName:
-                                        shippingNameController.text.trim(),
-                                    name: fullNameController.text.trim(),
-                                    email: emailController.text.trim(),
-                                    phone: phoneController.text.trim(),
-                                    zip: zipCodeController.text.trim(),
-                                    address: addressController.text.trim(),
-                                    city: cityController.text.trim());
+                                await provider.addAddress(
+                                  context,
+                                  shippingName:
+                                      shippingNameController.text.trim(),
+                                  name: fullNameController.text.trim(),
+                                  email: emailController.text.trim(),
+                                  phone: phoneController.text.trim(),
+                                  zip: zipCodeController.text.trim(),
+                                  address: addressController.text.trim(),
+                                  // city: cityController.text.trim()
+                                );
                               }
                             }
                           }, isloading: provider.isloading, borderRadius: 100),

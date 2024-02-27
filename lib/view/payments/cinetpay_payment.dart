@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:no_name_ecommerce/services/payment_services/payment_gateway_list_service.dart';
 import 'package:provider/provider.dart';
 
@@ -29,6 +30,7 @@ class CinetPayPayment extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         title: const Text('Cinetpay'),
       ),
       body: FutureBuilder(
@@ -39,13 +41,13 @@ class CinetPayPayment extends StatelessWidget {
             }
             if (snapshot.hasData) {
               return const Center(
-                child: Text('Loding failed.'),
+                child: Text('Loading failed.'),
               );
             }
             if (snapshot.hasError) {
               print(snapshot.error);
               return const Center(
-                child: Text('Loding failed.'),
+                child: Text('Loading failed.'),
               );
             }
             return WebView(
@@ -81,7 +83,7 @@ class CinetPayPayment extends StatelessWidget {
       "Accept": "application/json",
       // "Authorization":
       //     'Bearer EAAAEOuLQObrVwJvCvoio3H13b8Ssqz1ighmTBKZvIENW9qxirHGHkqsGcPBC1uN',
-      // Above is API server key for the Midtrans account, encoded to base64
+      // Above is API server key for the Mid trans account, encoded to base64
     };
 
     String apiKey =

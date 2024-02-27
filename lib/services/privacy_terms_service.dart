@@ -12,11 +12,11 @@ class PrivacyTermsService with ChangeNotifier {
   var privacyData;
 
   fetchTerms(BuildContext context) async {
+    debugPrint(termsData.toString());
     if (termsData != null) return;
 
     var connection = await checkConnection(context);
     if (!connection) return;
-
     var response = await http.get(Uri.parse(ApiUrl.termsUri));
 
     if (response.statusCode == 200) {

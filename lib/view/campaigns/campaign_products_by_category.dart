@@ -35,7 +35,9 @@ class CampaignProductByCategory extends StatelessWidget {
                   ? Column(
                       children: [
                         CampaignTimer(
-                          remainingTime: DateTime.parse("$endDate"),
+                          remainingTime: endDate == null
+                              ? p.endDate ?? DateTime.now()
+                              : DateTime.parse("$endDate"),
                         ),
                         gapH(30),
                         GridView.builder(
@@ -52,6 +54,7 @@ class CampaignProductByCategory extends StatelessWidget {
                                 imageLink:
                                     p.productList[i].imgUrl ?? placeHolderUrl,
                                 title: p.productList[i].title,
+                                taxOSR: p.productList[i].taxOSR,
                                 width: double.infinity,
                                 oldPrice: p.productList[i].price,
                                 discountPrice: p.productList[i].discountPrice,

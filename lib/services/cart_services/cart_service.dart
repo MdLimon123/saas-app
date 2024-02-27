@@ -20,6 +20,7 @@ class CartService with ChangeNotifier {
   int cartProductsNumber = 0;
   var totalPrice = 0.0;
   double couponDiscount = 0.0;
+  int totalQty = 0;
 
   var selectedColor;
   var selectedSize;
@@ -42,12 +43,24 @@ class CartService with ChangeNotifier {
 
   fetchCartProducts(BuildContext context) async {
     cartItemList = await ProductDbService().allCartProducts();
+    int qty = 0;
+    for (var element in cartItemList) {
+      qty = (qty + element["qty"]).toInt();
+      // debugPrint("quantity is $qty".toString());
+      // debugPrint("quantity is $qty".toString());
+      // debugPrint("quantity is $qty".toString());
+    }
+    totalQty = qty;
+    debugPrint("total quantity is $qty".toString());
+
     calculateSubtotal(context);
     notifyListeners();
   }
 
-  remove(productId, String title, BuildContext context) async {
-    await ProductDbService().removeFromCart(productId, title, context);
+  remove(
+      productId, String title, String attributes, BuildContext context) async {
+    await ProductDbService()
+        .removeFromCart(productId, title, attributes, context);
 
     //==============>
     fetchCartProducts(context);
@@ -56,12 +69,13 @@ class CartService with ChangeNotifier {
 
   //increase quantity and price
   increaseQtandPrice(productId, title, attributes, BuildContext context,
-      {bool ignoreAttribute = false}) async {
+      {bool ignoreAttribute = false, int qty = 1}) async {
+    debugPrint("starting raw quarry".toString());
     var data = await ProductDbService().getSingleProduct(
         productId, title, attributes,
         ignoreAttribute: ignoreAttribute);
-
-    var newQty = data[0]['qty'] + 1;
+    debugPrint(data.toString());
+    var newQty = data[0]['qty'] + qty;
     print('daaaa $data');
 
     await ProductDbService().updateQtandPrice(
@@ -124,13 +138,17 @@ class CartService with ChangeNotifier {
   }
 
 // total after coupon applied ======================>
-  calculateTotalAfterCouponApplied(
+  calculateTotalAfterCouponApplied(BuildContext context,
       {required oldDiscount, required newDiscount}) {
-    if (oldDiscount != null) {
-      subTotal = subTotal + double.parse(oldDiscount.toString());
-    }
+    // if (oldDiscount != null) {
+    //   subTotal = subTotal + double.parse(oldDiscount.toString());
+    // }
+    var vatAmount =
+        Provider.of<DeliveryAddressService>(context, listen: false).vatAmount;
+    var shipCost = Provider.of<DeliveryAddressService>(context, listen: false)
+        .selectedShipCost;
     couponDiscount = double.parse(newDiscount.toString());
-    totalPrice = subTotal - couponDiscount;
+    totalPrice = (subTotal + vatAmount + shipCost) - couponDiscount;
 
     notifyListeners();
   }
@@ -148,6 +166,12 @@ class CartService with ChangeNotifier {
   fetchCartProductNumber() async {
     List products = await ProductDbService().allCartProducts();
     cartProductsNumber = products.length;
+    int qty = 0;
+    for (var element in products) {
+      qty = (qty + element["qty"]).toInt();
+    }
+    totalQty = qty;
+    debugPrint("total quantity is $qty".toString());
     notifyListeners();
   }
 
@@ -169,6 +193,7 @@ class CartService with ChangeNotifier {
       required childCategory,
       required attributes,
       required variantId,
+      required taxOSR,
       bool ignoreAttribute = false}) async {
     var connection = await ProductDbService().getdatabase;
     var prod = await connection.rawQuery(
@@ -177,6 +202,8 @@ class CartService with ChangeNotifier {
 
     if (prod.isEmpty) {
       //if product is not already added to cart
+
+      totalQty += qty;
       addToCart(
           context: context,
           productId: productId,
@@ -192,22 +219,30 @@ class CartService with ChangeNotifier {
           subcategory: subcategory,
           childCategory: childCategory,
           attributes: attributes,
+          taxOSR: taxOSR,
           variantId: variantId);
       return true;
     } else {
+      bool containsProduct = false;
+      int index = 0;
+      for (var i = 0; i < prod.length; i++) {
+        if (prod[i]['attributes'] == jsonEncode(attributes) &&
+            prod[i]['productId'].toString() == productId.toString()) {
+          containsProduct = true;
+          index = i;
+        }
+      }
       //product already added to cart,
       //but check if the already added product has same
       //attributes than the new one, if so, then increase quantity
       //else add to cart as new product
-
-      if (prod[0]['attributes'] == jsonEncode(attributes) &&
-          prod[0]['productId'] == productId) {
+      if (containsProduct) {
         //then, increase quantity
         print('same product and same attributes');
 
         Provider.of<CartService>(context, listen: false).increaseQtandPrice(
             productId, title, attributes, context,
-            ignoreAttribute: ignoreAttribute);
+            ignoreAttribute: ignoreAttribute, qty: qty);
 
         showSnackBar(context, ConstString.qtyIncreased, successColor);
 
@@ -215,7 +250,7 @@ class CartService with ChangeNotifier {
       } else {
         print('different attributes');
         //so, add to cart as new product
-
+        totalQty += qty;
         addToCart(
             context: context,
             productId: productId,
@@ -231,6 +266,7 @@ class CartService with ChangeNotifier {
             subcategory: subcategory,
             childCategory: childCategory,
             attributes: attributes,
+            taxOSR: taxOSR,
             variantId: variantId);
 
         return false;
@@ -253,7 +289,8 @@ class CartService with ChangeNotifier {
       required subcategory,
       required childCategory,
       required attributes,
-      required variantId}) async {
+      required variantId,
+      required taxOSR}) async {
     var cartObj = AddtocartModel();
     cartObj.productId = productId;
     cartObj.title = title;
@@ -269,6 +306,7 @@ class CartService with ChangeNotifier {
     cartObj.childCategory = childCategory;
     cartObj.attributes = attributes;
     cartObj.variantId = variantId;
+    cartObj.taxOSR = taxOSR?.toString() ?? "";
 
     var connection = await ProductDbService().getdatabase;
 

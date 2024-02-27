@@ -23,11 +23,17 @@ class CheckoutService {
       };
       var options = {
         "variant_id": element['variantId'],
-        "attributes": element['attributes'],
+        "attributes": [],
+        //     element['attributes'] == "{}" || element['attributes'] == {}
+        //         ? []
+        //         : element['attributes'],
         "image": element['thumbnail'],
+        "tax_options_sum_rate":
+            element['tax_options_sum_rate'].toString() == "null"
+                ? "0"
+                : element['tax_options_sum_rate'],
         "used_categories": usedCategories
       };
-      print(attributes);
       if (attributes['Size'] != null) {
         options.putIfAbsent('size_name', () => attributes['Size']);
       }
@@ -41,7 +47,7 @@ class CheckoutService {
           rowId,
           () => {
                 "rowId": rowId,
-                "id": element["id"],
+                "id": element["productId"],
                 "name": element["title"],
                 "qty": element["qty"],
                 "price": element["priceWithAttr"],

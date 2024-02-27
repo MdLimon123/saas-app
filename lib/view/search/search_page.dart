@@ -5,7 +5,7 @@ import 'package:no_name_ecommerce/services/search_product_service.dart';
 import 'package:no_name_ecommerce/services/translate_string_service.dart';
 import 'package:no_name_ecommerce/view/checkout/components/cart_icon.dart';
 import 'package:no_name_ecommerce/view/home/components/product_card.dart';
-import 'package:no_name_ecommerce/view/search/components/search_bar.dart';
+import 'package:no_name_ecommerce/view/search/components/search_bar.dart' as sb;
 import 'package:no_name_ecommerce/view/utils/common_helper.dart';
 import 'package:no_name_ecommerce/view/utils/config.dart';
 import 'package:no_name_ecommerce/view/utils/const_strings.dart';
@@ -66,8 +66,8 @@ class _SearchPageState extends State<SearchPage> {
               await Provider.of<SearchProductService>(context, listen: false)
                   .searchProducts(context);
           if (result) {
-            debugPrint('loadcomplete ran');
-            //loadcomplete function loads the data again
+            debugPrint('load complete ran');
+            //load complete function loads the data again
             refreshController.loadComplete();
           } else {
             debugPrint('no more data');
@@ -89,7 +89,7 @@ class _SearchPageState extends State<SearchPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       gapH(10),
-                      const SearchBar(),
+                      const sb.SearchBar(),
                       gapH(10),
                       provider.noProductFound == false
                           ? provider.productList.isNotEmpty
@@ -108,6 +108,7 @@ class _SearchPageState extends State<SearchPage> {
                                           provider.productList[i].imgUrl ??
                                               placeHolderUrl,
                                       title: provider.productList[i].title,
+                                      taxOSR: provider.productList[i].taxOSR,
                                       width: 180,
                                       marginRight: 0,
                                       discountPrice:

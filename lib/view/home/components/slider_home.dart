@@ -9,6 +9,9 @@ import 'package:no_name_ecommerce/view/utils/constant_colors.dart';
 import 'package:no_name_ecommerce/view/utils/others_helper.dart';
 import 'package:provider/provider.dart';
 
+import '../../../services/campaign_service.dart';
+import '../../campaigns/campaign_products_by_category.dart';
+
 class SliderHome extends StatelessWidget {
   const SliderHome({
     Key? key,
@@ -19,8 +22,9 @@ class SliderHome extends StatelessWidget {
     return Consumer<SliderService>(
       builder: (context, sliderProvider, child) => sliderProvider
               .sliderImageList.isNotEmpty
-          ? SizedBox(
+          ? Container(
               height: 165,
+              margin: const EdgeInsets.only(top: 24),
               width: double.infinity,
               child: CarouselSlider.builder(
                 itemCount: sliderProvider.sliderImageList.length,
@@ -103,6 +107,28 @@ class SliderHome extends StatelessWidget {
                                       ),
                                     ),
                                     onPressed: () {
+                                      if (sliderProvider
+                                              .sliderImageList[i].category ==
+                                          null) {
+                                        Provider.of<CampaignService>(context,
+                                                listen: false)
+                                            .fetchCampaignProducts(
+                                                context,
+                                                sliderProvider
+                                                    .sliderImageList[i]
+                                                    .campaign);
+
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute<void>(
+                                            builder: (BuildContext context) =>
+                                                const CampaignProductByCategory(
+                                              endDate: null,
+                                            ),
+                                          ),
+                                        );
+                                        return;
+                                      }
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -123,7 +149,9 @@ class SliderHome extends StatelessWidget {
                 ),
               ),
             )
-          : showLoading(primaryColor),
+          : sliderProvider.noItems
+              ? const SizedBox()
+              : showLoading(primaryColor),
     );
   }
 }

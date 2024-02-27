@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:no_name_ecommerce/services/translate_string_service.dart';
 import 'package:no_name_ecommerce/view/utils/const_strings.dart';
@@ -16,16 +18,23 @@ class ProductDbService {
   setDatabase() async {
     var directory = await getApplicationDocumentsDirectory();
     var path = join(directory.path, 'product_db');
-    var database = await openDatabase(path, version: 1, onCreate: _dbOnCreate);
+    Database? database;
+    try {
+      database = await openDatabase(path, version: 1, onCreate: _dbOnCreate);
+    } catch (e) {
+      await _database?.execute("DROP TABLE IF EXISTS cart_table");
+      await _database?.execute("DROP TABLE IF EXISTS fav_table");
+      database = await openDatabase(path, version: 1, onCreate: _dbOnCreate);
+    }
     return database;
   }
 
   _dbOnCreate(Database database, int version) async {
     await database.execute(
-        "CREATE TABLE cart_table(id INTEGER PRIMARY KEY AUTOINCREMENT, productId TEXT, title TEXT, thumbnail TEXT, discountPrice REAL,oldPrice REAL,priceWithAttr REAL, qty INTEGER, color TEXT,size TEXT,category INTEGER,subcategory INTEGER,childCategory INTEGER,attributes TEXT,variantId INTEGER)");
+        "CREATE TABLE cart_table(id INTEGER PRIMARY KEY AUTOINCREMENT, productId TEXT, title TEXT, thumbnail TEXT, discountPrice REAL,oldPrice REAL,priceWithAttr REAL, qty INTEGER, color TEXT,size TEXT,category INTEGER,subcategory INTEGER,childCategory INTEGER,attributes TEXT,variantId INTEGER, tax_options_sum_rate TEXT)");
 
     await database.execute(
-        "CREATE TABLE fav_table(id INTEGER PRIMARY KEY AUTOINCREMENT, productId TEXT, title TEXT, thumbnail TEXT, discountPrice REAL,oldPrice REAL,priceWithAttr REAL, qty INTEGER, color TEXT,size TEXT,category INTEGER,subcategory INTEGER,childCategory INTEGER,attributes TEXT,variantId INTEGER)");
+        "CREATE TABLE fav_table(id INTEGER PRIMARY KEY AUTOINCREMENT, productId TEXT, title TEXT, thumbnail TEXT, discountPrice REAL,oldPrice REAL,priceWithAttr REAL, qty INTEGER, color TEXT,size TEXT,category INTEGER,subcategory INTEGER,childCategory INTEGER,attributes TEXT,variantId INTEGER, tax_options_sum_rate TEXT)");
   }
 
   Future<Database> get getdatabase async {
@@ -52,14 +61,18 @@ class ProductDbService {
     }
   }
 
-  removeFromCart(productId, title, BuildContext context) async {
+  removeFromCart(productId, title, attributes, BuildContext context) async {
     var connection = await getdatabase;
 
     var ln = Provider.of<TranslateStringService>(context, listen: false);
 
     await connection.rawDelete(
-        "DELETE FROM cart_table WHERE productId=? and title=?",
-        [productId, title]);
+        "DELETE FROM cart_table WHERE productId=? and title=? and attributes=?",
+        [
+          productId,
+          title,
+          (attributes is Map ? jsonEncode(attributes) : attributes)
+        ]);
 
     print('removed from cart');
 
@@ -85,7 +98,11 @@ class ProductDbService {
     } else {
       prod = connection.rawQuery(
           "SELECT * FROM cart_table WHERE productId=? and title =? and attributes =?",
-          [productId, title, attributes]);
+          [
+            productId,
+            title,
+            (attributes is Map ? jsonEncode(attributes) : attributes)
+          ]);
     }
 
     return prod;
@@ -103,7 +120,12 @@ class ProductDbService {
     } else {
       await connection.rawUpdate(
           "UPDATE cart_table SET qty=? WHERE productId=? and title =? and attributes =?",
-          [qty, productId, title, attributes]);
+          [
+            qty,
+            productId,
+            title,
+            (attributes is Map ? jsonEncode(attributes) : attributes)
+          ]);
     }
 
     return true;
